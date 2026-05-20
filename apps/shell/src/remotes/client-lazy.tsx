@@ -104,21 +104,35 @@ function ensureMfRuntime(): Promise<void> {
 				},
 			});
 
-			// Clear stale share cache populated by Vite auto-init (which runs before
-			// our custom init with proper lib() factories). Without this, remotes'
-			// loadShare() would return the cached version without a lib factory,
-			// causing each remote to load its own copy of React and breaking hooks.
-			const shareCache = (globalThis as any).__mf_module_cache__?.share;
-			if (shareCache) {
-				delete shareCache.react;
-				delete shareCache["react-dom"];
-				delete shareCache["react/jsx-runtime"];
-				delete shareCache["react/jsx-dev-runtime"];
-				delete shareCache["react-dom/client"];
-				delete shareCache["@tanstack/react-form"];
-				delete shareCache["@tanstack/react-router"];
-				delete shareCache["@tanstack/react-query"];
-				delete shareCache["@repo/cart-store"];
+			// Directly populate __FEDERATION__.__SHARE__ with lib factories,
+			// because init() registers keys but doesn't set version/singleton/lib.
+			// The Vite middleware uses __SHARE__ to resolve shared imports; without
+			// lib factories, remotes fall back to loading their own React copies.
+			const shareByProvider = (globalThis as any).__FEDERATION__?.__SHARE__;
+			if (shareByProvider) {
+				const pkgs: Array<[string, any, string]> = [
+					["react", React, "^19.2.6"],
+					["react-dom", ReactDOM, "^19.2.6"],
+					["react/jsx-runtime", ReactJsxRuntime, "^19.2.6"],
+					["react/jsx-dev-runtime", ReactJsxDevRuntime, "^19.2.6"],
+					["react-dom/client", ReactDomClient, "^19.2.6"],
+					["@tanstack/react-form", ReactForm, undefined],
+					["@tanstack/react-router", ReactRouter, undefined],
+					["@tanstack/react-query", ReactQuery, undefined],
+					["@repo/cart-store", CartStore, undefined],
+				];
+				for (const scopeName of Object.keys(shareByProvider)) {
+					const defaultScope = shareByProvider[scopeName]?.default;
+					if (!defaultScope) continue;
+					for (const [name, mod, reqVer] of pkgs) {
+						if (defaultScope[name]) {
+							defaultScope[name].lib = () => mod;
+							defaultScope[name].shareConfig = { singleton: true, ...(reqVer ? { requiredVersion: reqVer } : {}) };
+							defaultScope[name].version = "19.2.6";
+							defaultScope[name].from = "shell";
+						}
+					}
+				}
 			}
 
 				// We must also resolve the Vite plugin's internal promise
