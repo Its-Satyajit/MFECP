@@ -1,6 +1,5 @@
-import { clientLazy } from "./client-lazy";
-import { loadRemote } from "@module-federation/enhanced/runtime";
+import { clientLazy, loadMfRemote } from "./client-lazy";
 
 export const OrdersPage = clientLazy(() =>
-	loadRemote("order/order").then((m: any) => ({ default: m.OrdersPage || m.default?.OrdersPage || m.default }))
+	loadMfRemote("order/order").then((m: any) => ({ default: m.OrdersPage || m.default?.OrdersPage || m.default }))
 );

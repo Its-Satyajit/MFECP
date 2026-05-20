@@ -1,6 +1,5 @@
-import { clientLazy } from "./client-lazy";
-import { loadRemote } from "@module-federation/enhanced/runtime";
+import { clientLazy, loadMfRemote } from "./client-lazy";
 
 export const DashboardPage = clientLazy(() =>
-	loadRemote("dashboard/dashboard").then((m: any) => ({ default: m.DashboardPage || m.default?.DashboardPage || m.default }))
+	loadMfRemote("dashboard/dashboard").then((m: any) => ({ default: m.DashboardPage || m.default?.DashboardPage || m.default }))
 );

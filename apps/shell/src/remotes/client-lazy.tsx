@@ -1,4 +1,4 @@
-import { init } from "@module-federation/enhanced/runtime";
+import { createInstance } from "@module-federation/enhanced/runtime";
 import * as CartStore from "@repo/cart-store";
 import * as ReactQuery from "@tanstack/react-query";
 import * as ReactRouter from "@tanstack/react-router";
@@ -11,13 +11,13 @@ import * as ReactDomClient from "react-dom/client";
 
 const isServer = typeof window === "undefined";
 
+let mfInstance: ReturnType<typeof createInstance> | null = null;
 let mfInitPromise: Promise<void> | null = null;
 
 function ensureMfRuntime(): Promise<void> {
 	if (!mfInitPromise) {
 		mfInitPromise = (async () => {
-			try {
-			init({
+			mfInstance = createInstance({
 				name: "shell",
 				remotes: [
 					{
@@ -78,84 +78,58 @@ function ensureMfRuntime(): Promise<void> {
 						shareConfig: { singleton: true, requiredVersion: "^19.2.6" },
 					},
 					"@tanstack/react-form": {
-					version: "1.32.0",
-					scope: "default",
-					lib: () => ReactForm,
-					shareConfig: { singleton: true, requiredVersion: "*" },
-				},
-				"@tanstack/react-router": {
-					version: "1.0.0",
-					scope: "default",
-					lib: () => ReactRouter,
-					shareConfig: { singleton: true, requiredVersion: "*" },
-				},
-				"@tanstack/react-query": {
-					version: "5.0.0",
-					scope: "default",
-					lib: () => ReactQuery,
-					shareConfig: { singleton: true, requiredVersion: "*" },
-				},
-				"@repo/cart-store": {
-					version: "1.0.0",
-					scope: "default",
-					lib: () => CartStore,
-					shareConfig: { singleton: true, requiredVersion: "*" },
-				},
+						version: "1.32.0",
+						scope: "default",
+						lib: () => ReactForm,
+						shareConfig: { singleton: true, requiredVersion: "*" },
+					},
+					"@tanstack/react-router": {
+						version: "1.0.0",
+						scope: "default",
+						lib: () => ReactRouter,
+						shareConfig: { singleton: true, requiredVersion: "*" },
+					},
+					"@tanstack/react-query": {
+						version: "5.0.0",
+						scope: "default",
+						lib: () => ReactQuery,
+						shareConfig: { singleton: true, requiredVersion: "*" },
+					},
+					"@repo/cart-store": {
+						version: "1.0.0",
+						scope: "default",
+						lib: () => CartStore,
+						shareConfig: { singleton: true, requiredVersion: "*" },
+					},
 				},
 			});
 
-			// Directly populate __FEDERATION__.__SHARE__ with lib factories,
-			// because init() registers keys but doesn't set version/singleton/lib.
-			// The Vite middleware uses __SHARE__ to resolve shared imports; without
-			// lib factories, remotes fall back to loading their own React copies.
-			const shareByProvider = (globalThis as any).__FEDERATION__?.__SHARE__;
-			if (shareByProvider) {
-				const pkgs: Array<[string, any, string | undefined]> = [
-					["react", React, "^19.2.6"],
-					["react-dom", ReactDOM, "^19.2.6"],
-					["react/jsx-runtime", ReactJsxRuntime, "^19.2.6"],
-					["react/jsx-dev-runtime", ReactJsxDevRuntime, "^19.2.6"],
-					["react-dom/client", ReactDomClient, "^19.2.6"],
-					["@tanstack/react-form", ReactForm, undefined],
-					["@tanstack/react-router", ReactRouter, undefined],
-					["@tanstack/react-query", ReactQuery, undefined],
-					["@repo/cart-store", CartStore, undefined],
-				];
-				for (const scopeName of Object.keys(shareByProvider)) {
-					const defaultScope = shareByProvider[scopeName]?.default;
-					if (!defaultScope) continue;
-					for (const [name, mod, reqVer] of pkgs) {
-						if (defaultScope[name]) {
-							defaultScope[name].lib = () => mod;
-							defaultScope[name].shareConfig = { singleton: true, requiredVersion: reqVer ?? "*" };
-							defaultScope[name].version = "19.2.6";
-							defaultScope[name].from = "shell";
-						}
-					}
-				}
-			}
-
-				// We must also resolve the Vite plugin's internal promise
-				const globalKey = "__mf_init__virtual:mf:__mfe_internal__shell__mf_v__runtimeInit__mf_v__.js__";
-				if (!(globalThis as any)[globalKey]) {
-					const p = Promise.resolve() as any;
-					p.resolved = true;
-					(globalThis as any)[globalKey] = {
-						initPromise: p,
-						initResolve: () => {},
-						initReject: () => {},
-					};
-				} else {
-					const state = (globalThis as any)[globalKey];
-					if (state.initResolve) state.initResolve();
-					if (state.initPromise) state.initPromise.resolved = true;
-				}
-			} catch (e) {
-				console.error("MF runtime init failed:", e);
+			const globalKey = "__mf_init__virtual:mf:__mfe_internal__shell__mf_v__runtimeInit__mf_v__.js__";
+			if (!(globalThis as any)[globalKey]) {
+				const p = Promise.resolve() as any;
+				p.resolved = true;
+				(globalThis as any)[globalKey] = {
+					initPromise: p,
+					initResolve: () => {},
+					initReject: () => {},
+				};
+			} else {
+				const state = (globalThis as any)[globalKey];
+				if (state.initResolve) state.initResolve();
+				if (state.initPromise) state.initPromise.resolved = true;
 			}
 		})();
 	}
 	return mfInitPromise;
+}
+
+export function loadMfRemote<T>(id: string): Promise<T> {
+	if (!mfInstance) {
+		return Promise.reject(
+			new Error("MF runtime not initialized. Call ensureMfRuntime() first."),
+		);
+	}
+	return mfInstance.loadRemote(id) as Promise<T>;
 }
 
 export function clientLazy<T extends React.ComponentType<any>>(
@@ -165,9 +139,6 @@ export function clientLazy<T extends React.ComponentType<any>>(
 		return (() => null) as unknown as React.FC<React.ComponentProps<T>>;
 	}
 
-	// Defer React.lazy creation until after MF runtime is guaranteed initialized.
-	// Previously, React.lazy(factory) ran at module-load time, which could race
-	// against the MF runtime init on remount/HMR.
 	let LazyComp: React.LazyExoticComponent<T> | null = null;
 
 	function Wrapper(props: React.ComponentProps<T>) {
