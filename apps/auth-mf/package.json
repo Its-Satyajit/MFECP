@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/export.ts",
-    "./auth-instance": "./src/lib/auth-instance.ts"
+    "./auth-instance": "./src/lib/auth-instance.ts",
+    "./auth-client": "./src/lib/auth-client.ts"
   },
   "scripts": {
     "dev": "vite dev --port 3001",

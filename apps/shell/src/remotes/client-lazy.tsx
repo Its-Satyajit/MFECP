@@ -78,29 +78,29 @@ function ensureMfRuntime(): Promise<void> {
 						shareConfig: { singleton: true, requiredVersion: "^19.2.6" },
 					},
 					"@tanstack/react-form": {
-						version: "1.32.0",
-						scope: "default",
-						lib: () => ReactForm,
-						shareConfig: { singleton: true },
-					},
-					"@tanstack/react-router": {
-						version: "1.0.0",
-						scope: "default",
-						lib: () => ReactRouter,
-						shareConfig: { singleton: true },
-					},
-					"@tanstack/react-query": {
-						version: "5.0.0",
-						scope: "default",
-						lib: () => ReactQuery,
-						shareConfig: { singleton: true },
-					},
-					"@repo/cart-store": {
-						version: "1.0.0",
-						scope: "default",
-						lib: () => CartStore,
-						shareConfig: { singleton: true },
-					},
+					version: "1.32.0",
+					scope: "default",
+					lib: () => ReactForm,
+					shareConfig: { singleton: true, requiredVersion: "*" },
+				},
+				"@tanstack/react-router": {
+					version: "1.0.0",
+					scope: "default",
+					lib: () => ReactRouter,
+					shareConfig: { singleton: true, requiredVersion: "*" },
+				},
+				"@tanstack/react-query": {
+					version: "5.0.0",
+					scope: "default",
+					lib: () => ReactQuery,
+					shareConfig: { singleton: true, requiredVersion: "*" },
+				},
+				"@repo/cart-store": {
+					version: "1.0.0",
+					scope: "default",
+					lib: () => CartStore,
+					shareConfig: { singleton: true, requiredVersion: "*" },
+				},
 				},
 			});
 
@@ -110,7 +110,7 @@ function ensureMfRuntime(): Promise<void> {
 			// lib factories, remotes fall back to loading their own React copies.
 			const shareByProvider = (globalThis as any).__FEDERATION__?.__SHARE__;
 			if (shareByProvider) {
-				const pkgs: Array<[string, any, string]> = [
+				const pkgs: Array<[string, any, string | undefined]> = [
 					["react", React, "^19.2.6"],
 					["react-dom", ReactDOM, "^19.2.6"],
 					["react/jsx-runtime", ReactJsxRuntime, "^19.2.6"],
@@ -127,7 +127,7 @@ function ensureMfRuntime(): Promise<void> {
 					for (const [name, mod, reqVer] of pkgs) {
 						if (defaultScope[name]) {
 							defaultScope[name].lib = () => mod;
-							defaultScope[name].shareConfig = { singleton: true, ...(reqVer ? { requiredVersion: reqVer } : {}) };
+							defaultScope[name].shareConfig = { singleton: true, requiredVersion: reqVer ?? "*" };
 							defaultScope[name].version = "19.2.6";
 							defaultScope[name].from = "shell";
 						}

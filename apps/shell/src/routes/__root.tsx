@@ -1,9 +1,5 @@
-import { authClient } from "@repo/auth-mf";
+import { authClient } from "@repo/auth-mf/auth-client";
 import { selectTotalItems, useCartStore } from "@repo/cart-store";
-import * as ReactModule from "react";
-if (typeof window !== "undefined") {
-	(window as any).__SHELL_REACT_USEREF = ReactModule.useRef;
-}
 import type { QueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import {

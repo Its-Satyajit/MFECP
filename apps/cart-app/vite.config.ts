@@ -24,6 +24,7 @@ export default defineConfig({
 				"react-dom/client": { singleton: true },
 				"@repo/cart-store": { singleton: true },
 				"@tanstack/react-router": { singleton: true },
+				"@tanstack/react-form": { singleton: true },
 			},
 			dts: false,
 		}),

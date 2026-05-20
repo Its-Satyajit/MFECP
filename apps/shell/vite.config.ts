@@ -53,6 +53,7 @@ export default defineConfig({
 				"@repo/cart-store": { singleton: true },
 				"@tanstack/react-router": { singleton: true },
 				"@tanstack/react-query": { singleton: true },
+				"@tanstack/react-form": { singleton: true },
 			},
 			dts: false,
 		}),
