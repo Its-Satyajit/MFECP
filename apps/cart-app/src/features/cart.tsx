@@ -1,5 +1,5 @@
 import { selectTotalItems, selectTotalPrice, useCartStore } from "@repo/cart-store";
-import { Button } from "@repo/ui";
+import { AppImage, Button } from "@repo/ui";
 import { Link, useRouter } from "@tanstack/react-router";
 import { ShoppingCart } from "lucide-react";
 
@@ -68,9 +68,10 @@ export function CartPage() {
 					{items.map((item) => (
 						<div key={item.id} className="p-6 lg:p-8 flex gap-6">
 							<div className="w-20 h-20 lg:w-24 lg:h-24 shrink-0 bg-[#f0ece4] border border-[#d4cec4] flex items-center justify-center">
-								<img
+								<AppImage
 									src={item.image}
 									alt={item.title}
+									layout="fullWidth"
 									className="h-16 w-auto object-contain"
 								/>
 							</div>

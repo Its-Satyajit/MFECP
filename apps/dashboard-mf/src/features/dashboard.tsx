@@ -1,5 +1,5 @@
 import type { DashboardMetrics } from "@repo/types";
-import { Skeleton } from "@repo/ui";
+import { AppImage, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
 import {
 	DollarSign,
@@ -146,9 +146,10 @@ export function DashboardPage() {
 								className="flex items-center gap-4 p-4 lg:p-5"
 							>
 								<div className="h-12 w-12 bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
-									<img
+									<AppImage
 										src={product.image_url}
 										alt=""
+										layout="fullWidth"
 										className="h-full w-full object-contain p-1"
 									/>
 								</div>
@@ -215,9 +216,10 @@ export function DashboardPage() {
 									className="flex items-center gap-4 p-4 lg:p-5"
 								>
 									<div className="h-12 w-12 bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
-										<img
+										<AppImage
 											src={product.image_url}
 											alt=""
+											layout="fullWidth"
 											className="h-full w-full object-contain p-1"
 										/>
 									</div>
@@ -248,21 +250,24 @@ export function DashboardPage() {
 									className="flex items-center gap-4 p-4 lg:p-5"
 								>
 									<div className="h-10 w-10 rounded-full bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
-										{user.image ? (
-											<img
-												src={user.image}
-												alt=""
-												className="h-full w-full object-cover"
-											/>
-										) : (
-											<span className="text-xs font-bold uppercase text-[#6b6760]">
-												{(user.name || user.email || "?").charAt(0)}
-											</span>
-										)}
+										<AppImage
+											src={user.image}
+											alt=""
+											layout="fullWidth"
+											className="h-full w-full object-cover"
+											fallback={
+												<span className="text-xs font-bold uppercase text-[#6b6760]">
+													{(user.name || user.email || "?").charAt(0)}
+												</span>
+											}
+										/>
 									</div>
 									<div className="flex-1 min-w-0">
 										<p className="text-sm text-[#1a1a1a] truncate font-medium">
 											{user.name || "Unknown"}
+										</p>
+										<p className="text-xs text-[#6b6760] mt-0.5 truncate">
+											{user.email}
 										</p>
 										<p className="text-xs text-[#6b6760] mt-0.5 truncate">
 											{user.email}

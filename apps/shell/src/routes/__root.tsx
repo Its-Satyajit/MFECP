@@ -1,5 +1,6 @@
 import { authClient } from "@repo/auth-mf/auth-client";
 import { selectTotalItems, useCartStore } from "@repo/cart-store";
+import { AppImage } from "@repo/ui";
 import type { QueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -136,21 +137,21 @@ function Layout() {
 								<div className="flex items-center gap-3">
 									<div className="hidden sm:flex items-center gap-2">
 										<div className="h-7 w-7 rounded-full bg-[#eae6de] border border-[#d4cec4] overflow-hidden shrink-0 flex items-center justify-center">
-											{session?.user?.image ? (
-												<img
-													src={session.user.image}
-													alt=""
-													className="h-full w-full object-cover"
-												/>
-											) : (
-												<span className="text-[10px] font-medium text-[#6b6760] uppercase">
-													{(
-														session?.user?.name ||
-														session?.user?.email ||
-														"U"
-													).charAt(0)}
-												</span>
-											)}
+											<AppImage
+												src={session?.user?.image}
+												alt=""
+												layout="fullWidth"
+												className="h-full w-full object-cover"
+												fallback={
+													<span className="text-[10px] font-medium text-[#6b6760] uppercase">
+														{(
+															session?.user?.name ||
+															session?.user?.email ||
+															"U"
+														).charAt(0)}
+													</span>
+												}
+											/>
 										</div>
 										<span className="text-xs tracking-[0.08em] text-[#6b6760]">
 											{session?.user?.name || session?.user?.email}

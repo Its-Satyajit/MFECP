@@ -1,5 +1,5 @@
 import { selectTotalItems, selectTotalPrice, useCartStore } from "@repo/cart-store";
-import { Alert, AlertDescription, Button, Input, Label } from "@repo/ui";
+import { Alert, AlertDescription, AppImage, Button, Input, Label } from "@repo/ui";
 import { useForm } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
@@ -352,9 +352,10 @@ export function CheckoutPage() {
 						{items.map((item) => (
 							<div key={item.id} className="flex gap-4 py-4 first:pt-0">
 								<div className="w-14 h-14 shrink-0 bg-[#f0ece4] border border-[#d4cec4] flex items-center justify-center">
-									<img
+									<AppImage
 										src={item.image}
 										alt={item.title}
+										layout="fullWidth"
 										className="h-10 w-auto object-contain"
 									/>
 								</div>

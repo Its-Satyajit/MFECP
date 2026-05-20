@@ -1,6 +1,6 @@
 import { useCartStore } from "@repo/cart-store";
 import type { Product } from "@repo/types";
-import { Button, Rating, Skeleton } from "@repo/ui";
+import { AppImage, Button, Rating, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "@tanstack/react-router";
 import { useMemo } from "react";
@@ -130,9 +130,10 @@ export function ProductPage() {
 		<div className="animate-in fade-in duration-500">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-[#d4cec4]">
 				<div className="lg:col-span-7 border-b lg:border-b-0 lg:border-r border-[#d4cec4] p-10 lg:p-14 flex items-center justify-center min-h-[50vh] lg:min-h-[70vh] bg-[#f0ece4]">
-					<img
+					<AppImage
 						src={product.image_url}
 						alt={product.name}
+						layout="fullWidth"
 						className="max-h-[80%] max-w-full object-contain transition-transform duration-700 hover:scale-105"
 					/>
 				</div>
@@ -214,9 +215,10 @@ export function ProductPage() {
 										}
 									>
 										<div className="w-12 h-12 shrink-0 bg-[#f0ece4] border border-[#d4cec4] flex items-center justify-center">
-											<img
+											<AppImage
 												src={related.image_url}
 												alt={related.name}
+												layout="fullWidth"
 												className="h-8 w-auto object-contain"
 											/>
 										</div>

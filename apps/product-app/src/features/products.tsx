@@ -1,10 +1,10 @@
 import type { Product } from "@repo/types";
-import { Skeleton } from "@repo/ui";
+import { AppImage, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import type { DocumentData } from "flexsearch";
-import { Document } from "flexsearch";
+
 import { useMemo, useState } from "react";
+import { Document } from "flexsearch";
 import { treatyClient } from "../lib/api";
 
 export function ProductsPage() {
@@ -35,7 +35,7 @@ export function ProductsPage() {
 			},
 		});
 		for (const p of products) {
-			doc.add(p as unknown as DocumentData);
+			doc.add(p as never);
 		}
 		return doc;
 	}, [products]);
@@ -163,9 +163,10 @@ export function ProductsPage() {
 
 							<div className="relative w-full aspect-[4/3] mb-6 flex items-center justify-center bg-[#f0ece4] overflow-hidden">
 								<div className="absolute inset-0 bg-gradient-to-t from-[#f5f2ed] via-transparent to-transparent opacity-0 group-hover:opacity-60 transition-opacity z-10" />
-								<img
+								<AppImage
 									src={product.image_url}
 									alt={product.name}
+									layout="fullWidth"
 									className="h-full w-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
 								/>
 							</div>

@@ -1,6 +1,7 @@
 import type { Order } from "@repo/types";
-import { Skeleton } from "@repo/ui";
+import { AppImage, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Package } from "lucide-react";
 import { treatyClient } from "../lib/api";
 
@@ -125,9 +126,10 @@ export function OrdersPage() {
 								className="flex items-center gap-4 p-4 lg:p-5"
 							>
 								<div className="h-16 w-16 bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
-									<img
+									<AppImage
 										src={item.image}
 										alt={item.title}
+										layout="fullWidth"
 										className="h-full w-full object-contain p-1.5"
 									/>
 								</div>
