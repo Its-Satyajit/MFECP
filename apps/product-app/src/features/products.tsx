@@ -1,5 +1,5 @@
 import type { Product } from "@repo/types";
-import { AppImage, Skeleton } from "@repo/ui";
+import { Image, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
@@ -163,7 +163,7 @@ export function ProductsPage() {
 
 							<div className="relative w-full aspect-[4/3] mb-6 flex items-center justify-center bg-[#f0ece4] overflow-hidden">
 								<div className="absolute inset-0 bg-gradient-to-t from-[#f5f2ed] via-transparent to-transparent opacity-0 group-hover:opacity-60 transition-opacity z-10" />
-								<AppImage
+								<Image
 									src={product.image_url}
 									alt={product.name}
 									layout="fullWidth"

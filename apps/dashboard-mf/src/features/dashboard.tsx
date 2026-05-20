@@ -1,5 +1,5 @@
 import type { DashboardMetrics } from "@repo/types";
-import { AppImage, Skeleton } from "@repo/ui";
+import { Image, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
 import {
 	DollarSign,
@@ -146,7 +146,7 @@ export function DashboardPage() {
 								className="flex items-center gap-4 p-4 lg:p-5"
 							>
 								<div className="h-12 w-12 bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
-									<AppImage
+									<Image
 										src={product.image_url}
 										alt=""
 										layout="fullWidth"
@@ -216,7 +216,7 @@ export function DashboardPage() {
 									className="flex items-center gap-4 p-4 lg:p-5"
 								>
 									<div className="h-12 w-12 bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
-										<AppImage
+										<Image
 											src={product.image_url}
 											alt=""
 											layout="fullWidth"
@@ -250,7 +250,7 @@ export function DashboardPage() {
 									className="flex items-center gap-4 p-4 lg:p-5"
 								>
 									<div className="h-10 w-10 rounded-full bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
-										<AppImage
+										<Image
 											src={user.image}
 											alt=""
 											layout="fullWidth"

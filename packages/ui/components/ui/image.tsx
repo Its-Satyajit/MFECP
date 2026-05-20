@@ -11,7 +11,7 @@ interface AppImageProps {
 	onError?: () => void;
 }
 
-function AppImage({
+function Image({
 	src,
 	alt,
 	className,
@@ -62,4 +62,4 @@ function AppImage({
 	return <UnpicImage {...(picProps as ImageProps)} />;
 }
 
-export { AppImage, type AppImageProps };
+export { Image, type AppImageProps };
