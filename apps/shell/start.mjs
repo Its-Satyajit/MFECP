@@ -1,8 +1,9 @@
-import { spawn } from "node:child_process";
+import { spawn, execSync } from "node:child_process";
 import { resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dirname, "../..");
 const SHELL_DIR = resolve(ROOT, "apps/shell");
+const DB_DIR = resolve(ROOT, "packages/db");
 
 const MFES = [
 	{ port: 3001, dir: resolve(ROOT, "apps/auth-mf") },
@@ -28,7 +29,15 @@ function onExit() {
 process.on("SIGINT", onExit);
 process.on("SIGTERM", onExit);
 
-// Start MFE preview servers first so they claim their ports
+// Run pending DB migrations before starting
+console.log("\n[SHELL] Running database migrations...\n");
+try {
+	execSync("pnpm exec drizzle-kit migrate", { cwd: DB_DIR, stdio: "inherit" });
+} catch {
+	console.log("[SHELL] Migration skipped or already applied.");
+}
+
+// Start MFE preview servers
 for (const mfe of MFES) {
 	start("pnpm exec vite preview --port " + mfe.port, [], { cwd: mfe.dir });
 }
