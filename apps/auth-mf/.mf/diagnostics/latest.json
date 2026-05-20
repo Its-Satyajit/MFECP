@@ -1,10 +1,10 @@
 {
   "latestErrorEvent": {
     "code": "TYPE-001",
-    "message": "Failed to generate type declaration. Execute the below cmd to reproduce and fix the error. #TYPE-001\nargs: {\"cmd\":\"npx tsc --project /home/satyajit/Documents/GitHub/MFECP/apps/auth-mf/node_modules/.federation/tsconfig.d7622fcc93ab05c61c6fbc22ab849ce1.json\"}\nView the docs to see how to solve: https://module-federation.io/guide/troubleshooting/type#type-001",
+    "message": "Failed to generate type declaration. Execute the below cmd to reproduce and fix the error. #TYPE-001\nargs: {\"cmd\":\"npx tsc --project /home/satyajit/Documents/GitHub/MFECP/apps/auth-mf/node_modules/.federation/tsconfig.f3f072eecd728579647ec22b284aacc7.json\"}\nView the docs to see how to solve: https://module-federation.io/guide/troubleshooting/type#type-001",
     "args": {
-      "cmd": "npx tsc --project /home/satyajit/Documents/GitHub/MFECP/apps/auth-mf/node_modules/.federation/tsconfig.d7622fcc93ab05c61c6fbc22ab849ce1.json"
+      "cmd": "npx tsc --project /home/satyajit/Documents/GitHub/MFECP/apps/auth-mf/node_modules/.federation/tsconfig.f3f072eecd728579647ec22b284aacc7.json"
     },
-    "timestamp": 1779256138980
+    "timestamp": 1779258979160
   }
 }

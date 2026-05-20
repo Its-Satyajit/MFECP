@@ -1,13 +1,18 @@
 import { t } from "elysia";
 
 export const ProductSchema = t.Object({
-	id: t.Number(),
-	title: t.String(),
+	id: t.String(),
+	name: t.String(),
 	price: t.Number(),
 	description: t.String(),
 	category: t.String(),
-	image: t.String(),
-	rating: t.Any(),
+	stock: t.Number(),
+	sku: t.String(),
+	image_url: t.String(),
+	rating: t.Object({
+		rate: t.Number(),
+		count: t.Number(),
+	}),
 });
 
 export const OrderItemSchema = t.Object({
@@ -34,23 +39,39 @@ export const OrderSchema = t.Object({
 	items: t.Array(OrderItemSchema),
 });
 
-export const CartSchema = t.Object({
-	id: t.Number(),
-	userId: t.Number(),
-	products: t.Array(ProductSchema),
+export const JsoningCartSchema = t.Object({
+	id: t.String(),
+	userId: t.Union([t.Null(), t.Number()]),
+	items: t.Array(
+		t.Object({
+			productId: t.Number(),
+			quantity: t.Number(),
+		}),
+	),
+	date: t.String(),
+	status: t.String(),
 });
 
-export const UserSchema = t.Object({
-	id: t.Number(),
-	username: t.String(),
+export const JsoningUserSchema = t.Object({
+	id: t.String(),
+	firstname: t.String(),
+	lastname: t.String(),
 	email: t.String(),
-	password: t.String(),
+	username: t.String(),
+	address: t.String(),
+	city: t.String(),
+	state: t.String(),
+	zipcode: t.String(),
+	country: t.String(),
+	phone: t.String(),
 });
 
 export const DashboardMetricsSchema = t.Object({
 	productStats: t.Object({
 		total: t.Number(),
-		categories: t.Array(t.Object({ name: t.String(), count: t.Number() })),
+		categories: t.Array(
+			t.Object({ name: t.String(), count: t.Number() }),
+		),
 		avgPrice: t.Number(),
 		avgRating: t.Number(),
 		minPrice: t.Number(),

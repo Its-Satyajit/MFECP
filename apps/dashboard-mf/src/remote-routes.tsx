@@ -1,9 +1,7 @@
 import { DashboardPage } from "./features/dashboard"
-import { OrdersPage } from "./features/orders"
 
-export { DashboardPage, OrdersPage }
+export { DashboardPage }
 
 export const dashboardRoutes = {
   dashboard: DashboardPage,
-  orders: OrdersPage,
 }

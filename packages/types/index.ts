@@ -6,12 +6,14 @@ export interface User {
 }
 
 export interface Product {
-	id: number;
-	title: string;
+	id: string;
+	name: string;
 	price: number;
 	description: string;
 	category: string;
-	image: string;
+	stock: number;
+	sku: string;
+	image_url: string;
 	rating?: {
 		rate: number;
 		count: number;
@@ -70,4 +72,44 @@ export interface DashboardMetrics {
 		avgItems: number;
 	};
 	userCount: number;
+}
+
+export interface JsoningProduct {
+	id: string;
+	name: string;
+	description: string;
+	price: number;
+	category: string;
+	stock: number;
+	sku: string;
+	image_url: string;
+	rating: {
+		rate: number;
+		count: number;
+	};
+}
+
+export interface JsoningUser {
+	id: string;
+	firstname: string;
+	lastname: string;
+	email: string;
+	username: string;
+	address: string;
+	city: string;
+	state: string;
+	zipcode: string;
+	country: string;
+	phone: string;
+}
+
+export interface JsoningCart {
+	id: string;
+	userId: null | number;
+	items: Array<{
+		productId: number;
+		quantity: number;
+	}>;
+	date: string;
+	status: string;
 }

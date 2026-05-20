@@ -1,5 +1,5 @@
 import { authClient } from "@repo/auth-mf";
-import { selectTotalItems, useCartStore } from "@repo/commerce-mf";
+import { selectTotalItems, useCartStore } from "@repo/cart-store";
 import type { QueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -9,6 +9,7 @@ import {
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
+import { Suspense } from "react";
 import { getSession, type SessionData } from "../lib/session";
 import appCss from "../styles.css?url";
 
@@ -176,7 +177,9 @@ function Layout() {
 				</div>
 			</nav>
 			<main className="max-w-7xl mx-auto pt-20 pb-16 px-6 lg:px-12 min-h-screen relative z-10">
-				<Outlet />
+				<Suspense fallback={<div className="pt-12 text-center text-sm text-[#6b6760] uppercase tracking-[0.12em]">Loading...</div>}>
+					<Outlet />
+				</Suspense>
 			</main>
 		</div>
 	);

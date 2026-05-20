@@ -7,5 +7,6 @@
     "libsql",
     "lightningcss",
     "TURSO"
-  ]
+  ],
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

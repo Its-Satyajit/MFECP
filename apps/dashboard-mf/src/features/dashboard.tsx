@@ -1,4 +1,3 @@
-import { treatyClient } from "@repo/commerce-mf/api";
 import type { DashboardMetrics } from "@repo/types";
 import { Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +10,7 @@ import {
 	TrendingUp,
 	Users,
 } from "lucide-react";
+import { treatyClient } from "../lib/api";
 
 function StatCard({
 	icon: Icon,
@@ -74,7 +74,6 @@ export function DashboardPage() {
 				</div>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 					{Array.from({ length: 4 }).map((_, i) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: <Skeleton>
 						<div key={i} className="border border-[#d4cec4] p-5 lg:p-6 space-y-3">
 							<Skeleton className="h-3 w-20 bg-[#eae6de]" />
 							<Skeleton className="h-8 w-24 bg-[#eae6de]" />
@@ -148,14 +147,14 @@ export function DashboardPage() {
 							>
 								<div className="h-12 w-12 bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
 									<img
-										src={product.image}
+										src={product.image_url}
 										alt=""
 										className="h-full w-full object-contain p-1"
 									/>
 								</div>
 								<div className="flex-1 min-w-0">
 									<p className="text-sm text-[#1a1a1a] truncate font-medium">
-										{product.title}
+										{product.name}
 									</p>
 									<div className="flex items-center gap-3 mt-0.5">
 										<div className="flex items-center gap-1">
@@ -217,14 +216,14 @@ export function DashboardPage() {
 								>
 									<div className="h-12 w-12 bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
 										<img
-											src={product.image}
+											src={product.image_url}
 											alt=""
 											className="h-full w-full object-contain p-1"
 										/>
 									</div>
 									<div className="flex-1 min-w-0">
 										<p className="text-sm text-[#1a1a1a] truncate">
-											{product.title}
+											{product.name}
 										</p>
 										<p className="text-xs text-[#6b6760] mt-0.5 capitalize">
 											{product.category}
@@ -239,43 +238,42 @@ export function DashboardPage() {
 					</div>
 				)}
 
-				{data.recentUsers &&
-					data.recentUsers.length > 0 && (
-						<div>
-							<SectionHeading>Recent Registrations</SectionHeading>
-							<div className="border border-[#d4cec4] divide-y divide-[#d4cec4]">
-								{data.recentUsers.map((user) => (
-									<div
-										key={user.id}
-										className="flex items-center gap-4 p-4 lg:p-5"
-									>
-										<div className="h-10 w-10 rounded-full bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
-											{user.image ? (
-												<img
-													src={user.image}
-													alt=""
-													className="h-full w-full object-cover"
-												/>
-											) : (
-												<span className="text-xs font-bold uppercase text-[#6b6760]">
-													{(user.name || user.email || "?").charAt(0)}
-												</span>
-											)}
-										</div>
-										<div className="flex-1 min-w-0">
-											<p className="text-sm text-[#1a1a1a] truncate font-medium">
-												{user.name || "Unknown"}
-											</p>
-											<p className="text-xs text-[#6b6760] mt-0.5 truncate">
-												{user.email}
-											</p>
-										</div>
-										<TrendingUp className="h-4 w-4 text-[#9a9690] shrink-0" />
+				{data.recentUsers && data.recentUsers.length > 0 && (
+					<div>
+						<SectionHeading>Recent Registrations</SectionHeading>
+						<div className="border border-[#d4cec4] divide-y divide-[#d4cec4]">
+							{data.recentUsers.map((user) => (
+								<div
+									key={user.id}
+									className="flex items-center gap-4 p-4 lg:p-5"
+								>
+									<div className="h-10 w-10 rounded-full bg-[#f8f6f0] border border-[#e0dbd2] flex items-center justify-center shrink-0 overflow-hidden">
+										{user.image ? (
+											<img
+												src={user.image}
+												alt=""
+												className="h-full w-full object-cover"
+											/>
+										) : (
+											<span className="text-xs font-bold uppercase text-[#6b6760]">
+												{(user.name || user.email || "?").charAt(0)}
+											</span>
+										)}
 									</div>
-								))}
-							</div>
+									<div className="flex-1 min-w-0">
+										<p className="text-sm text-[#1a1a1a] truncate font-medium">
+											{user.name || "Unknown"}
+										</p>
+										<p className="text-xs text-[#6b6760] mt-0.5 truncate">
+											{user.email}
+										</p>
+									</div>
+									<TrendingUp className="h-4 w-4 text-[#9a9690] shrink-0" />
+								</div>
+							))}
 						</div>
-					)}
+					</div>
+				)}
 			</div>
 		</div>
 	);

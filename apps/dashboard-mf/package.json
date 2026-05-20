@@ -7,14 +7,13 @@
     ".": "./src/export.ts"
   },
   "scripts": {
-    "dev": "vite dev --port 3002",
+    "dev": "vite dev --port 3005",
     "build": "vite build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@icons-pack/react-simple-icons": "^13.13.0",
-    "@repo/auth-mf": "workspace:*",
-    "@repo/commerce-mf": "workspace:*",
+    "@elysia/eden": "^1.4.10",
+    "@repo/api-server": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "latest",
@@ -27,7 +26,7 @@
   "devDependencies": {
     "@module-federation/vite": "^1.15.5",
     "@rolldown/plugin-babel": "^0.2.3",
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "babel-plugin-react-compiler": "^1.0.0",

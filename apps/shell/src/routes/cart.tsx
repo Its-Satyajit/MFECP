@@ -1,5 +1,5 @@
-import { CartPage } from "@repo/commerce-mf";
 import { createFileRoute } from "@tanstack/react-router";
+import { CartPage } from "../remotes/cart";
 
 export const Route = createFileRoute("/cart")({
 	component: CartPage,

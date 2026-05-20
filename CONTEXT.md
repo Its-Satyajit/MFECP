@@ -4,35 +4,37 @@
 
 An item available for purchase in the e-commerce store. Products have the following attributes:
 
-- id: Unique identifier (integer)
-- title: Product name (string)
+- id: Unique identifier (string, from jsoning.com)
+- name: Product name (string)
 - price: Cost in USD (number)
 - description: Detailed product information (string)
 - category: Product classification (string)
-- image: URL to product image (string)
+- stock: Available inventory count (number)
+- sku: Stock keeping unit (string)
+- image_url: URL to product image (string)
 - rating: Product rating information (object) containing:
   - rate: Average rating value (number)
   - count: Number of ratings (integer)
 
-Product data is retrieved from the FakeStoreAPI at <https://fakestoreapi.com/products/{id}> via an Elysia proxy at `/api/products/{id}`
+Product data is retrieved from the jsoning.com API at `https://api.jsoning.com/mock/public/products/{id}` via an Elysia proxy at `/api/products/{id}`
 
 ## Cart
 
-A transient collection of products a customer intends to purchase. The cart is stored client-side (localStorage) and is not persisted to any server. Each entry in the cart is a CartItem.
+A transient collection of products a customer intends to purchase. The cart is stored client-side (localStorage) via a shared Zustand store (`@repo/cart-store`) and is not persisted to any server. Each entry in the cart is a CartItem.
 
 ## CartItem
 
 A single line within the Cart representing one product and a chosen quantity. CartItem attributes:
 
-- id: Product identifier (integer, matches Product.id)
-- title: Product name (string, matches Product.title)
+- id: Product identifier (number, matches Product.id parsed to number)
+- title: Product name (string, maps from Product.name)
 - price: Unit price in USD (number, matches Product.price)
-- image: Product image URL (string, matches Product.image)
+- image: Product image URL (string, maps from Product.image_url)
 - quantity: Number of units desired (positive integer)
 
 ## Add to Bag
 
-The action of adding a Product to the Cart as a CartItem with quantity 1. If the product is already in the Cart, its quantity is incremented by 1 instead of creating a duplicate entry.
+The action of adding a Product to the Cart as a CartItem with quantity 1. If the product is already in the Cart, its quantity is incremented by 1 instead of creating a duplicate entry. If the User is not authenticated, they are redirected to login first.
 
 ## Checkout
 
@@ -50,26 +52,42 @@ _Avoid_: Account, member
 
 ## Dashboard
 
-A metrics and analytics hub visible to authenticated Users. Displays product statistics, revenue snapshots, top-rated products, category breakdowns, recent products, and recent account registrations. Data is aggregated from the FakeStoreAPI proxy and the local database.
+A metrics and analytics hub visible to authenticated Users. Displays product statistics, revenue snapshots, top-rated products, category breakdowns, recent products, and recent account registrations. Data is aggregated from the jsoning.com API proxy and the local database.
 
 ## Micro Frontend (MFE)
 
-An independently deployable build artifact that exposes page-level React components. MFEs own business logic and UI for a domain. They have no router, no API handler, no standalone layout, and no SSR — the Shell owns all of those. The Shell imports MFE components directly from MFE packages at build time. MFEs are independently versioned and independently built, but the Shell must rebuild to pick up new MFE versions. Each MFE contains its own source code (features, lib, state) — the domain packages (`@repo/auth`, `@repo/commerce`, `@repo/dashboard`) do not exist; their code lives inside the MFE.
+An independently deployable build artifact that exposes page-level React components via Module Federation at runtime. MFEs own business logic and UI for a domain. They have no router, no API handler, no standalone layout, and no SSR — the Shell owns all of those. The Shell loads MFE components as runtime remotes via `@module-federation/vite`. MFEs are independently versioned and independently built, running on separate ports in development.
 
 _Avoid_: Remote app, sub-app, microservice frontend
 
 ## Shell
 
-The host application that owns SSR, routing, authentication sessions, API proxying, layout, and hydration. Imports components directly from MFE packages (`@repo/auth-mf`, `@repo/commerce-mf`, `@repo/dashboard-mf`) at build time. Renders all content server-side.
+The host application that owns SSR, routing, authentication sessions, API proxying, layout, and hydration. Loads MFE components as runtime Module Federation remotes (auth-app, product-app, cart-app, order-app, dashboard-mf). Renders layout server-side; MFE components load client-side.
 _Avoid_: Host app, container
+
+## Auth App
+
+The MFE responsible for User Authentication. Exposes `LoginPage` and `RegisterPage` components. Uses Better Auth for authentication with email/password and social providers (GitHub, Google, Facebook). Runs on port 3001.
+
+## Product App
+
+The MFE responsible for Product browsing. Exposes `ProductsPage` (catalog listing with search and category filter) and `ProductPage` (detail view with Add to Bag). Runs on port 3002.
+
+## Cart App
+
+The MFE responsible for Cart and Checkout. Exposes `CartPage` (items list with quantity controls) and `CheckoutPage` (shipping form, order summary, place order). Runs on port 3003.
+
+## Order App
+
+The MFE responsible for Order history. Exposes `OrdersPage` (list of past orders with items). Protected — requires authentication. Runs on port 3004.
 
 ## Authentication
 
-The process of verifying a User's identity via email/password or a social provider (GitHub, Google, Facebook). Successful authentication creates a Session.
+The process of verifying a User's identity via email/password or a social provider (GitHub, Google, Facebook). Successful authentication creates a Session. Auth gate is at Add to Bag and Checkout.
 
 ## Session
 
-A User's active authenticated login. Managed server-side via secure cookies.
+A User's active authenticated login. Managed server-side via secure cookies (Better Auth).
 
 ## Order
 

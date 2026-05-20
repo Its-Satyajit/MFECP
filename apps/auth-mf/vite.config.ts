@@ -16,7 +16,6 @@ export default defineConfig({
 			shared: {
 				react: { singleton: true },
 				"react-dom": { singleton: true },
-				"@repo/auth-mf": { singleton: true },
 			},
 		}),
 	],

@@ -1,7 +1,7 @@
-import { CheckoutPage } from "@repo/commerce-mf";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { CheckoutPage } from "../remotes/cart";
 import { getSession, type SessionData } from "../lib/session";
 
 function CheckoutRoute() {

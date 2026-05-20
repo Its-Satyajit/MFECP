@@ -1,15 +1,15 @@
 import { desc } from "drizzle-orm";
 import { Elysia } from "elysia";
-import { FAKE_STORE_API } from "../constants";
+import { JSONING_API } from "../constants";
 import { DashboardMetricsSchema } from "../schemas";
 
 export const dashboardRoutes = new Elysia({ prefix: "/api/dashboard" }).get(
 	"/metrics",
 	async () => {
 		const [products, carts, fakeUsers, { db, schema }] = await Promise.all([
-			fetch(`${FAKE_STORE_API}/products`).then((r) => r.json()),
-			fetch(`${FAKE_STORE_API}/carts`).then((r) => r.json()),
-			fetch(`${FAKE_STORE_API}/users`).then((r) => r.json()),
+			fetch(`${JSONING_API}/products`).then((r) => r.json()),
+			fetch(`${JSONING_API}/carts`).then((r) => r.json()),
+			fetch(`${JSONING_API}/users`).then((r) => r.json()),
 			import("@repo/db"),
 		]);
 
@@ -31,12 +31,12 @@ export const dashboardRoutes = new Elysia({ prefix: "/api/dashboard" }).get(
 		const totalOrders = allOrders.length;
 		const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-		const categories = [...new Set(products.map((p: any) => p.category))].map(
-			(name) => ({
-				name,
-				count: products.filter((p: any) => p.category === name).length,
-			}),
-		);
+		const categories = [
+			...new Set(products.map((p: any) => p.category)),
+		].map((name) => ({
+			name,
+			count: products.filter((p: any) => p.category === name).length,
+		}));
 		const prices = products.map((p: any) => p.price);
 		const ratings = products
 			.filter((p: any) => p.rating)
@@ -45,11 +45,9 @@ export const dashboardRoutes = new Elysia({ prefix: "/api/dashboard" }).get(
 			(a: any, b: any) => b.rating.rate - a.rating.rate,
 		);
 
-		const cartItems = carts.flatMap((c: any) => c.products || []);
-		const totalCartItems = cartItems.length;
 		const totalCarts = carts.length;
 
-		const result = {
+		return {
 			productStats: {
 				total: products.length,
 				categories,
@@ -86,15 +84,10 @@ export const dashboardRoutes = new Elysia({ prefix: "/api/dashboard" }).get(
 			})),
 			cartStats: {
 				totalCarts,
-				avgItems:
-					totalCarts > 0
-						? Math.round((totalCartItems / totalCarts) * 100) / 100
-						: 0,
+				avgItems: 0,
 			},
 			userCount: fakeUsers.length,
-		};
-
-		return result as any;
+		} as any;
 	},
 	{
 		response: DashboardMetricsSchema,
