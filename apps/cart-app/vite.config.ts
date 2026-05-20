@@ -5,8 +5,11 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
 	plugins: [
-		viteReact(),
-		babel({ presets: [reactCompilerPreset()] }),
+		viteReact({
+			babel: {
+				presets: [reactCompilerPreset()],
+			},
+		}),
 		federation({
 			name: "cart",
 			filename: "remoteEntry.js",
@@ -17,7 +20,9 @@ export default defineConfig({
 				react: { singleton: true },
 				"react-dom": { singleton: true },
 				"@repo/cart-store": { singleton: true },
+				"@tanstack/react-router": { singleton: true },
 			},
+			dts: false,
 		}),
 	],
 	build: {

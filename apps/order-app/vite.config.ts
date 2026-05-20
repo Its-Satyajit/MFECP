@@ -5,8 +5,11 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
 	plugins: [
-		viteReact(),
-		babel({ presets: [reactCompilerPreset()] }),
+		viteReact({
+			babel: {
+				presets: [reactCompilerPreset()],
+			},
+		}),
 		federation({
 			name: "order",
 			filename: "remoteEntry.js",
@@ -16,7 +19,9 @@ export default defineConfig({
 			shared: {
 				react: { singleton: true },
 				"react-dom": { singleton: true },
+				"@tanstack/react-query": { singleton: true },
 			},
+			dts: false,
 		}),
 	],
 	build: {

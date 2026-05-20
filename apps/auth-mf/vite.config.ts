@@ -5,8 +5,11 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
 	plugins: [
-		viteReact(),
-		babel({ presets: [reactCompilerPreset()] }),
+		viteReact({
+			babel: {
+				presets: [reactCompilerPreset()],
+			},
+		}),
 		federation({
 			name: "auth",
 			filename: "remoteEntry.js",
@@ -17,6 +20,7 @@ export default defineConfig({
 				react: { singleton: true },
 				"react-dom": { singleton: true },
 			},
+			dts: false,
 		}),
 	],
 	build: {

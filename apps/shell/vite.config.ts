@@ -10,25 +10,55 @@ export default defineConfig({
 		tsconfigPaths: true,
 	},
 	plugins: [
-		tailwindcss(),
-		tanstackStart(),
-		viteReact(),
 		federation({
 			name: "shell",
+			filename: "remoteEntry.js",
+			manifest: true,
+			exposes: {
+				"./dummy": "./src/env.ts",
+			},
 			remotes: {
-				auth: "http://localhost:3001/remoteEntry.js",
-				product: "http://localhost:3002/remoteEntry.js",
-				cart: "http://localhost:3003/remoteEntry.js",
-				order: "http://localhost:3004/remoteEntry.js",
-				dashboard: "http://localhost:3005/remoteEntry.js",
+				auth: {
+					type: "module",
+					name: "auth",
+					entry: "http://localhost:3001/remoteEntry.js",
+				},
+				product: {
+					type: "module",
+					name: "product",
+					entry: "http://localhost:3002/remoteEntry.js",
+				},
+				cart: {
+					type: "module",
+					name: "cart",
+					entry: "http://localhost:3003/remoteEntry.js",
+				},
+				order: {
+					type: "module",
+					name: "order",
+					entry: "http://localhost:3004/remoteEntry.js",
+				},
+				dashboard: {
+					type: "module",
+					name: "dashboard",
+					entry: "http://localhost:3005/remoteEntry.js",
+				},
 			},
 			shared: {
 				react: { singleton: true },
 				"react-dom": { singleton: true },
 				"@repo/cart-store": { singleton: true },
+				"@tanstack/react-router": { singleton: true },
+				"@tanstack/react-query": { singleton: true },
 			},
 			dts: false,
 		}),
-		babel({ presets: [reactCompilerPreset()] }),
+		tailwindcss(),
+		tanstackStart(),
+		viteReact({
+			babel: {
+				presets: [reactCompilerPreset()],
+			},
+		}),
 	],
 });

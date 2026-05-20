@@ -1,3 +1,7 @@
+declare module "virtual:mf:__mfe_internal__shell__H_A_I__hostAutoInit__H_A_I__.js" {
+	export function initHost(): Promise<unknown>;
+}
+
 declare module "auth/auth" {
 	export const LoginPage: React.ComponentType;
 	export const RegisterPage: React.ComponentType;
