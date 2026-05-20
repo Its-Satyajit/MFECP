@@ -11,6 +11,7 @@ const googleClientId = z.string().optional();
 const googleClientSecret = z.string().optional();
 const facebookClientId = z.string().optional();
 const facebookClientSecret = z.string().optional();
+const databaseUrl = z.string().optional();
 const tursoDatabaseUrl = z.string().url().optional();
 const tursoAuthToken = z.string().optional();
 const serverUrl = z.string().url().optional();
@@ -29,6 +30,7 @@ export const authServerSchema = {
 };
 
 export const dbServerSchema = {
+	DATABASE_URL: databaseUrl,
 	TURSO_DATABASE_URL: tursoDatabaseUrl,
 	TURSO_AUTH_TOKEN: tursoAuthToken,
 };

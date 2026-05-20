@@ -3,7 +3,32 @@ import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
+
+function fixMfBundlePlugin(): Plugin {
+	return {
+		name: "fix-mf-bundle",
+		generateBundle(_, bundle) {
+			for (const chunk of Object.values(bundle)) {
+				if (chunk.type !== "chunk") continue;
+				if (chunk.isEntry && chunk.name !== "index") {
+					(chunk as Record<string, unknown>).isEntry = false;
+				}
+				if (chunk.fileName === "server.js") {
+					const m = chunk.code.match(
+						/await Promise\.all\(\[\]\);\n?\s*\}\)\(\)\.then\(\(\)\s*=>\s*import\("\.\/assets\/server-([^"]+)"\)\);/,
+					);
+					if (m) {
+						chunk.code = chunk.code.replace(
+							"export {};",
+							`export { default } from "./assets/server-${m[1]}";`,
+						);
+					}
+				}
+			}
+		},
+	};
+}
 
 export default defineConfig({
 	resolve: {
@@ -57,6 +82,7 @@ export default defineConfig({
 			},
 			dts: false,
 		}),
+		fixMfBundlePlugin(),
 		tailwindcss(),
 		tanstackStart(),
 		viteReact({
