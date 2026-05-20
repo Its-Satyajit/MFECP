@@ -1,8 +1,10 @@
 @import 'tailwindcss';
 
 @source '../../apps/auth-mf/src';
-@source '../../apps/commerce-mf/src';
 @source '../../apps/dashboard-mf/src';
+@source '../../apps/cart-app/src';
+@source '../../apps/product-app/src';
+@source '../../apps/order-app/src';
 @source './components';
 @source './lib';
 
