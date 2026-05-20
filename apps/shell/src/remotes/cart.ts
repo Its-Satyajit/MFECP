@@ -1,9 +1,10 @@
 import { clientLazy } from "./client-lazy";
+import { loadRemote } from "@module-federation/enhanced/runtime";
 
-export const CartPage = clientLazy(
-	() => import("cart/cart").then((m) => ({ default: m.CartPage })),
+export const CartPage = clientLazy(() =>
+	loadRemote("cart/cart").then((m: any) => ({ default: m.CartPage || m.default?.CartPage || m.default }))
 );
 
-export const CheckoutPage = clientLazy(
-	() => import("cart/cart").then((m) => ({ default: m.CheckoutPage })),
+export const CheckoutPage = clientLazy(() =>
+	loadRemote("cart/cart").then((m: any) => ({ default: m.CheckoutPage || m.default?.CheckoutPage || m.default }))
 );

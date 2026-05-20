@@ -19,6 +19,10 @@ export default defineConfig({
 			shared: {
 				react: { singleton: true },
 				"react-dom": { singleton: true },
+				"react/jsx-runtime": { singleton: true },
+				"react/jsx-dev-runtime": { singleton: true },
+				"react-dom/client": { singleton: true },
+				"@tanstack/react-form": { singleton: true },
 			},
 			dts: false,
 		}),

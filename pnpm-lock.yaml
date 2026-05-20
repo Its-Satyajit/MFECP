@@ -376,6 +376,9 @@ importers:
       '@tanstack/react-devtools':
         specifier: latest
         version: 0.10.5(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(csstype@3.2.3)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(solid-js@1.9.12)
+      '@tanstack/react-form':
+        specifier: ^1.32.0
+        version: 1.32.0(@tanstack/react-start@1.168.6(@rspack/core@2.0.3(@module-federation/runtime-tools@2.4.0(node-fetch@3.3.2)))(crossws@0.4.5(srvx@0.11.15))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(vite@8.0.13(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3)))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@tanstack/react-query':
         specifier: latest
         version: 5.100.11(react@19.2.6)

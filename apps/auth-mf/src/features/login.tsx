@@ -2,7 +2,13 @@ import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import { Alert, AlertDescription, Button, Input, Label } from "@repo/ui";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
+import * as ReactModule from "react";
 import { authClient } from "../lib/auth-client";
+
+if (typeof window !== "undefined") {
+	console.log("auth-mf React version:", ReactModule.version);
+	console.log("auth-mf React is shell React:", ReactModule.useRef === (window as any).__SHELL_REACT_USEREF);
+}
 
 export function LoginPage() {
 	const [error, setError] = useState("");

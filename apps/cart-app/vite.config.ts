@@ -19,6 +19,9 @@ export default defineConfig({
 			shared: {
 				react: { singleton: true },
 				"react-dom": { singleton: true },
+				"react/jsx-runtime": { singleton: true },
+				"react/jsx-dev-runtime": { singleton: true },
+				"react-dom/client": { singleton: true },
 				"@repo/cart-store": { singleton: true },
 				"@tanstack/react-router": { singleton: true },
 			},
