@@ -9,18 +9,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function createDb() {
-	if (env.TURSO_DATABASE_URL) {
-		const client = createClient({
-			url: env.TURSO_DATABASE_URL,
-			authToken: env.TURSO_AUTH_TOKEN,
-		});
-		return drizzle(client);
-	}
+	const url =
+		env.DATABASE_URL ??
+		env.TURSO_DATABASE_URL ??
+		`file:${resolve(__dirname, "local.db")}`;
 
-	const client = createClient({
-		url: `file:${resolve(__dirname, "local.db")}`,
-	});
-	return drizzle(client);
+	const opts: Record<string, string> = { url };
+	if (env.TURSO_AUTH_TOKEN) opts.authToken = env.TURSO_AUTH_TOKEN;
+
+	return drizzle(createClient(opts));
 }
 
 export const db = createDb();
