@@ -1,0 +1,36 @@
+{
+	"name": "@repo/api-server",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"exports": {
+		".": "./index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@elysia/eden": "latest",
+		"@repo/auth-mf": "workspace:*",
+		"@repo/db": "workspace:*",
+		"@tanstack/react-start": "latest",
+		"drizzle-orm": "^0.45.2",
+		"elysia": "latest",
+		"lru-cache": "^11.5.0",
+		"openapi-types": "latest",
+		"server-only": "latest"
+	},
+	"devDependencies": {
+		"@sinclair/typebox": "latest",
+		"@types/node": "^25.9.1",
+		"typescript": "^6.0.3"
+	},
+	"peerDependencies": {
+		"@types/node": "*"
+	},
+	"peerDependenciesMeta": {
+		"@types/node": {
+			"optional": true
+		}
+	}
+}

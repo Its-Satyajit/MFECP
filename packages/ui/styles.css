@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+
+@source '../../apps/auth-mf/src';
+@source '../../apps/dashboard-mf/src';
+@source '../../apps/cart-app/src';
+@source '../../apps/product-app/src';
+@source '../../apps/order-app/src';
+@source './components';
+@source './lib';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --bg: #f5f2ed;
+  --fg: #1a1a1a;
+  --muted: #6b6760;
+  --accent: #ff4d00;
+  --accent-glow: rgba(255, 77, 0, 0.08);
+  --cyan: #00b8a0;
+  --cyan-glow: rgba(0, 184, 160, 0.06);
+  --surface: #ffffff;
+  --surface-alt: #eae6de;
+  --border: #d4cec4;
+  --border-light: #e0dbd2;
+  --radius: 0px;
+
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--surface);
+  --card-foreground: var(--fg);
+  --popover: var(--surface);
+  --popover-foreground: var(--fg);
+  --primary: var(--accent);
+  --primary-foreground: #fff;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--fg);
+  --muted: var(--muted);
+  --muted-foreground: var(--muted);
+  --accent-foreground: var(--fg);
+  --destructive: #ef4444;
+  --destructive-foreground: #fff;
+  --border: var(--border);
+  --input: var(--border);
+  --ring: var(--accent);
+  --chart-1: var(--accent);
+  --chart-2: var(--cyan);
+}
+
+.dark {
+  --bg: #0a0a0a;
+  --fg: #f0eade;
+}
+
+@theme inline {
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Anton', sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}

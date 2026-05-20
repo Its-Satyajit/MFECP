@@ -1,0 +1,38 @@
+{
+  "name": "@repo/cart-app",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/export.ts"
+  },
+  "scripts": {
+    "dev": "vite dev --port 3003",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elysia/eden": "^1.4.10",
+    "@repo/api-server": "workspace:*",
+    "@repo/cart-store": "workspace:*",
+    "@repo/types": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@tanstack/react-form": "^1.32.0",
+    "@tanstack/react-router": "^1.170.4",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.16.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@module-federation/vite": "^1.15.5",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13"
+  }
+}
