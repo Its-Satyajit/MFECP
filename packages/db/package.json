@@ -1,0 +1,26 @@
+{
+	"name": "@repo/db",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"main": "index.ts",
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
+	},
+	"exports": {
+		".": "./index.ts"
+	},
+	"dependencies": {
+		"@libsql/client": "^0.17.3",
+		"@repo/env": "workspace:*",
+		"better-auth": "latest",
+		"drizzle-orm": "^0.45.2"
+	},
+	"devDependencies": {
+		"@types/node": "^22.19.19",
+		"drizzle-kit": "^0.31.10",
+		"typescript": "^6.0.3"
+	}
+}

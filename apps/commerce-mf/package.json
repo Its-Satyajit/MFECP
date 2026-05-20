@@ -1,0 +1,45 @@
+{
+  "name": "@repo/commerce-mf",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/export.ts",
+    "./api": "./src/lib/api.ts"
+  },
+  "scripts": {
+    "dev": "vite dev --port 3003",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elysia/eden": "^1.4.10",
+    "@icons-pack/react-simple-icons": "^13.13.0",
+    "@repo/api-server": "workspace:*",
+    "@repo/db": "workspace:*",
+    "@repo/types": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@tanstack/react-form": "^1.32.0",
+    "@tanstack/react-query": "latest",
+    "@tanstack/react-router": "^1.170.1",
+    "clsx": "^2.1.1",
+    "flexsearch": "^0.8.212",
+    "lucide-react": "^1.16.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "tailwind-merge": "^3.6.0",
+    "zustand": "^5.0.13"
+  },
+  "devDependencies": {
+    "@module-federation/vite": "^1.15.5",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@types/node": "^22.19.19",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "elysia": "^1.4.28",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13"
+  }
+}

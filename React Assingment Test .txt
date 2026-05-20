@@ -1,0 +1,206 @@
+﻿Assignment Test (Submit with in 3days )
+
+Micro Frontend Application  – React.js/Next.js
+
+Objective
+Build a Micro Frontend E-Commerce Application using React / Next.js where multiple independent frontend applications are interconnected and work together as a single scalable e-commerce platform.
+
+
+Modules:
+
+* User Authentication
+
+* Product List
+
+* Cart
+
+* Order List
+
+
+Use:
+   * React.js /Next.js  (Latest Stable Version)
+
+   *  Micro Frontend Architecture
+
+   * Separate Angular applications:
+
+      * shell (Host App)
+
+      * auth-app
+
+      * product-app
+
+      * cart-app
+
+      * Order-app
+
+
+Routing Rules
+
+         * Each app run on diffrent port like
+
+         3000, 3001 , 30002 etc
+
+         * Open Product page first
+
+         * When click on Product "add to cart"
+
+         * If not logged in → Redirect to Login
+
+         * After login → Redirect to Products
+
+         * Products -> Cart -> Orders (Protected Routes)
+
+
+
+ Expected Technical Concepts
+
+            * React.js (Hooks, Context, Lifecycle)
+            * Next.js (App Router / Pages Router, SSR, SSG)
+            * Redux Toolkit / Zu stand / Recoil
+            * REST APIs / Axios / Fetch / Graph QL
+            * Build Tools/ Webpack / Vite
+            * JavaScript (ES6+) / TypeScript
+            * Micro frontend Architecture/ Webpack Module Federation
+
+
+
+
+API / you can also used your own APIS -
+
+Product List
+https://api.jsoning.com/mock/public/products
+ User List
+https://api.jsoning.com/mock/public/users
+ Cart List
+https://api.jsoning.com/mock/public/carts
+
+
+
+NB:Do You can use or refer to any AI tools (such as ChatGPT, Copilot, Bard, or similar AI-assisted coding tools) while completing this assignment.
+The purpose of this assignment is to evaluate your individual technical skills, architecture understanding, and problem-solving ability.
+
+
+
+https://api.jsoning.com/mock/public/products
+
+interface Response {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  sku: string;
+  image_url: string;
+  rating: Rating;
+}
+
+interface Rating {
+  rate: number;
+  count: number;
+}
+
+https://api.jsoning.com/mock/public/products/1
+
+interface Response {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  sku: string;
+  image_url: string;
+  rating: Rating;
+}
+
+interface Rating {
+  rate: number;
+  count: number;
+}
+
+
+https://api.jsoning.com/mock/public/users
+
+interface Response {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  username: string;
+  address: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  country: string;
+  phone: string;
+}
+
+https://api.jsoning.com/mock/public/users/1
+
+interface Response {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  username: string;
+  address: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  country: string;
+  phone: string;
+}
+
+
+https://api.jsoning.com/mock/public/carts
+
+interface Response {
+  id: string;
+  userId: null | number;
+  items: Item[];
+  date: string;
+  status: string;
+}
+
+interface Item {
+  productId: number;
+  quantity: number;
+}
+
+https://api.jsoning.com/mock/public/carts/1
+
+interface Response {
+  id: string;
+  userId: number;
+  items: Item[];
+  date: string;
+  status: string;
+}
+
+interface Item {
+  productId: number;
+  quantity: number;
+}
+
+https://api.jsoning.com/mock/public/coupons
+interface Response {
+  id: string;
+  code: string;
+  discount: number;
+  start_date: string;
+  end_date: string;
+  conditions: string;
+}
+
+https://api.jsoning.com/mock/public/coupons/1
+
+interface Response {
+  id: string;
+  code: string;
+  discount: number;
+  start_date: string;
+  end_date: string;
+  conditions: string;
+}
