@@ -6,13 +6,13 @@ Accepted
 
 ## Context
 
-We needed to implement a single product view page that displays detailed information for a specific product retrieved from the FakeStoreAPI. The page should be accessible via a route like `/products/:id` and show extended product information including specifications, reviews, and related products.
+We needed to implement a single product view page that displays detailed information for a specific product retrieved from the jsoning.com API. The page should be accessible via a route like `/products/:id` and show extended product information including specifications, reviews, and related products.
 
 ## Decision
 
 We implemented the ProductPage component in the commerce package (`@repo/commerce`) with the following characteristics:
 
-1. **Data Fetching**: Used TanStack Query's `useQuery` hook to fetch product data from `https://fakestoreapi.com/products/{id}` where the ID comes from route parameters
+1. **Data Fetching**: Used TanStack Query's `useQuery` hook to fetch product data from `https://api.jsoning.com/mock/public/products/{id}` where the ID comes from route parameters
 2. **Route Parameter Access**: Used TanStack Router's `useParams` hook to extract the product ID from the URL
 3. **UI Components**: Utilized existing UI components from `@repo/ui` where possible, with custom styling for product-specific layout
 4. **Navigation**: Added navigation links from the ProductsPage to ProductPage using TanStack Router's `Link` component
@@ -21,11 +21,11 @@ We implemented the ProductPage component in the commerce package (`@repo/commerc
 
 ## Location Choice
 
-We placed the component in `@repo/commerce/src/features/product.tsx` because:
+We placed the component in `apps/product-app/src/features/product.tsx` because:
 
-- The commerce package already contains related product functionality (ProductsPage)
-- Keeping product-related features in the same package maintains cohesion
-- The component is specific to the commerce domain
+- The product-app already contains related product functionality (ProductsPage)
+- Keeping product-related features in the same MFE maintains cohesion
+- The component is specific to the product domain
 
 ## Data Fetching Approach
 
@@ -68,6 +68,6 @@ The component follows a responsive layout:
 
 ## References
 
-- [FakeStoreAPI Documentation](https://fakestoreapi.com/docs)
+- [jsoning.com API Documentation](https://jsoning.com/api)
 - [TanStack Query Documentation](https://tanstack.com/query/latest)
 - [TanStack Router Documentation](https://tanstack.com/router/latest)

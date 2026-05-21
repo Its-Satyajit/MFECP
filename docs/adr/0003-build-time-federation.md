@@ -28,21 +28,23 @@ Use **build-time federation**: the shell imports MFE components directly from wo
 
 ### What changes
 
-- Shell routes import components via `import { ProductsPage } from "@repo/commerce"` — no dynamic `import()`, no `ClientOnly`, no `<Suspense>`
+- Shell routes import components via runtime federation (ADR 0004) — not build-time imports
 - MFEs are stripped of their router, route tree, API handler, layout, and standalone dev server — they are pure component providers
-- Shell is the only app with a dev server (`pnpm dev` starts only port 3000)
-- All environment config lives in the shell's `.env`
-- Tailwind CSS is handled by the shell's Vite pipeline
+- Shell is the only app with a dev server (`pnpm dev` starts MFEs and shell on ports 3000-3005)
 
 ### Independent deployability
 
 Instead of runtime hot-swapping of remote URLs, independent deployment works through the workspace dependency chain:
 
-1. MFE team publishes a new version of `@repo/commerce-mf`
-2. Shell bumps the dependency: `"@repo/commerce-mf": "workspace:^2.0.0"`
+1. MFE team publishes a new version of a package
+2. Shell bumps the dependency
 3. Shell rebuilds, picking up the new components
 
 This trades runtime independence for full SSR, simpler code, and elimination of loading states.
+
+---
+
+**Note:** ADR 0004 later replaced build-time federation with runtime Module Federation via `@module-federation/enhanced/runtime`. MFEs are now loaded at runtime through `clientLazy()`, with SSR for shell layout only. See ADR 0004 for the current architecture.
 
 ## Consequences
 

@@ -25,28 +25,30 @@ flowchart TB
     subgraph Packages["Shared Packages"]
         UI["@repo/ui<br/>ShadCN-style components"]
         Types["@repo/types<br/>Product, User, Order interfaces"]
-        DB["@repo/db<br/>Drizzle ORM + libSQL/Turso"]
+        DB["@repo/db<br/>Drizzle ORM + libSQL (SQLite)"]
         ApiServer["@repo/api-server<br/>Elysia app instance"]
+        CartStore["@repo/cart-store<br/>Zustand cart store"]
         Query["@repo/query<br/>TanStack Query config"]
     end
 
     subgraph External["External"]
-        FSA[("FakeStoreAPI<br/>fakestoreapi.com")]
-        Turso[("Turso / SQLite DB<br/>users, sessions, orders")]
+        Jsoning[("jsoning.com API<br/>products, users")]
+        LocalDB[("Local SQLite DB<br/>users, sessions, orders")]
     end
 
     Browser --> Shell
-    Layout --> AuthMF & CommerceMF & DashboardMF
+    Layout --> AuthMF & ProductMF & CartMF & OrderMF & DashboardMF
     Router --> SSR
     SSR --> QClient
     SSR --> API
 
-    CommerceMF --> API
+    CartMF --> API
+    OrderMF --> API
     DashboardMF --> API
     AuthMF --> API
 
-    API -->|proxy /products, /carts, /users| FSA
-    API -->|CRUD orders, auth| Turso
+    API -->|proxy /products, /users| Jsoning
+    API -->|CRUD orders, auth| LocalDB
 
     Shell --> Packages
 ```
@@ -56,7 +58,7 @@ flowchart TB
 ```mermaid
 flowchart LR
     subgraph Build["Build"]
-        MFE_SRC["MFE Source Code<br/>apps/auth-mf/src/*"] --> Vite["Vite 8 +<br/>@module-federation/vite"]
+        MFE_SRC["MFE Source Code<br/>apps/*/src/*"] --> Vite["Vite 8 +<br/>@module-federation/vite"]
         Vite --> RemoteEntry["remoteEntry.js<br/>+ chunk files<br/>→ dist/"]
         SHELL_SRC["Shell Source Code<br/>apps/shell/src/*"] --> SVite["Vite 8 +<br/>@tanstack/react-start/plugin"]
         SVite --> ShellBundle["Shell Bundle<br/>apps/shell/dist/"]
@@ -80,7 +82,7 @@ The Shell loads MFE components at runtime via `@module-federation/enhanced/runti
 | Order | `order` | `http://localhost:3004/remoteEntry.js` |
 | Dashboard | `dashboard` | `http://localhost:3005/remoteEntry.js` |
 
-Remote URLs are configurable via environment variables. MFE components load client-side only — the shell renders `null` on the server and hydrates after `@module-federation/enhanced/runtime` initializes.
+Remote URLs are configurable via environment variables (VITE_REMOTE_*). MFE components load client-side only — the shell renders `null` on the server and hydrates after `@module-federation/enhanced/runtime` initializes.
 
 ## SSR Request Lifecycle
 
@@ -246,7 +248,7 @@ sequenceDiagram
     alt Cache Hit
         Cache-->>Elysia: Return cached
     else Cache Miss
-        Elysia->>Source: fetch(FakeStoreAPI + LRU cache)
+        Elysia->>Source: fetch(jsoning.com + LRU cache)
         Source-->>Elysia: Response
         Elysia->>Cache: cache.set(key, data, 300s)
     end
@@ -286,7 +288,7 @@ flowchart LR
     subgraph Server["Server Side"]
         API["POST /api/orders"]
         Drizzle["Drizzle ORM"]
-        DB[("libSQL / Turso")]
+        DB[("Local SQLite")]
     end
 
     Product["Product"] -->|"addItem"| Zustand
@@ -308,12 +310,12 @@ flowchart TD
     Dash["DashboardPage<br/>apps/dashboard-mf/src/features/dashboard.tsx"] -->|"useQuery"| Treaty["treatyClient"]
     Treaty -->|"GET /api/dashboard/metrics"| Elysia["Elysia Route<br/>packages/api-server/src/routes/dashboard.ts"]
 
-    Elysia -->|"fetch()"| FSA[("FakeStoreAPI")]
-    Elysia -->|"Drizzle select()"| LocalDB[("Turso DB")]
+    Elysia -->|"fetch()"| Jsoning[("jsoning.com API")]
+    Elysia -->|"Drizzle select()"| LocalDB[("Local SQLite")]
 
-    FSA -->|"/products"| Products["Product Catalog Stats<br/>total, categories, avgPrice<br/>avgRating, min/maxPrice"]
-    FSA -->|"/carts"| Carts["Cart Stats<br/>totalCarts, avgItems/cart"]
-    FSA -->|"/users"| Users["FakeStore User Count"]
+    Jsoning -->|"/products"| Products["Product Catalog Stats<br/>total, categories, avgPrice<br/>avgRating, min/maxPrice"]
+    Jsoning -->|"/carts"| Carts["Cart Stats<br/>totalCarts, avgItems/cart"]
+    Jsoning -->|"/users"| Users["User Count"]
     LocalDB -->|"ORDER BY createdAt DESC<br/>LIMIT 5"| RecentUsers["Recent Auth Users"]
     LocalDB -->|"SELECT * FROM orders"| Orders["Revenue Metrics<br/>totalOrders, totalRevenue<br/>avgOrderValue"]
 
@@ -340,7 +342,7 @@ flowchart TD
 | CSS | Tailwind CSS v4 + tw-animate-css |
 | Icons | Lucide React + Simple Icons |
 | Auth | Better Auth ^1.6 (email/password + GitHub, Google, Facebook) |
-| Database | Drizzle ORM ^0.45 + libSQL (SQLite/Turso) |
+| Database | Drizzle ORM ^0.45 + libSQL (local SQLite) |
 | API Server | Elysia (type-safe, Eden Treaty client) |
 | Client State | Zustand ^5.13 (localStorage persist) |
 | Search | FlexSearch ^0.8 (client-side full-text) |
@@ -354,7 +356,7 @@ flowchart TD
 ## Route Map
 
 | Path | Component | Remote | Auth Required | Guard |
-|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|
 | `/` | ProductsPage | `product/product` | No | — |
 | `/product/$id` | ProductPage | `product/product` | No | — |
 | `/cart` | CartPage | `cart/cart` | No | — |
@@ -378,7 +380,8 @@ Micro-Frontend-E-Commerce-Platform/
 │   └── dashboard-mf/       # @repo/dashboard-mf Dashboard MFE (port 3005)
 ├── packages/
 │   ├── api-server/         # @repo/api-server   Elysia API app instance
-│   ├── db/                 # @repo/db           Drizzle + libSQL/Turso
+│   ├── cart-store/         # @repo/cart-store   Zustand cart store
+│   ├── db/                 # @repo/db           Drizzle + libSQL (SQLite)
 │   ├── env/                # @repo/env          T3 Env + Zod schemas
 │   ├── query/              # @repo/query        Shared TanStack Query client
 │   ├── types/              # @repo/types        Shared TypeScript interfaces
@@ -396,10 +399,12 @@ Micro-Frontend-E-Commerce-Platform/
 
 ```bash
 pnpm install              # Install dependencies
-pnpm dev                  # Start all MFEs (3001-3005) + shell (3000) in parallel
-pnpm dev:shell            # Start shell only (requires MFEs already running)
+pnpm dev                  # Start all MFEs (3001-3005) + shell (3000) in parallel (dev servers)
 pnpm build                # Build all packages + MFEs + shell
 pnpm typecheck            # TypeScript check all packages
 pnpm test                 # Run tests
 pnpm lint                 # Biome lint all packages
+
+# Production preview (after build)
+node apps/shell/start.mjs # Runs migrations, starts MFEs + shell on ports 3000-3005
 ```

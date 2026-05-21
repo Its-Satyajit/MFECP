@@ -65,4 +65,5 @@ Use **runtime Module Federation** as the primary federation strategy:
 - `apps/shell/src/remotes/client-lazy.tsx` — Runtime MF orchestration
 - `apps/shell/src/remotes/` — Per-MFE remote loaders
 - `CONTEXT.md` — Domain glossary (see MFE, Shell entries)
+- `docs/architecture.md` — System architecture diagrams
 - ADR 0003: Build-time Federation (superseded)
