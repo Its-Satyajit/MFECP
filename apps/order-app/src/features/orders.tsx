@@ -68,7 +68,7 @@ export function OrdersPage() {
           </h1>
         </div>
         <div className="border border-border p-12 lg:p-16 text-center">
-          <Package className="h-10 w-10 mx-auto mb-4 text-muted-foreground/70" />
+          <Package aria-hidden="true" className="h-10 w-10 mx-auto mb-4 text-muted-foreground/70" />
           <p className="text-sm text-muted-foreground mb-1">No orders yet</p>
           <p className="text-xs text-muted-foreground/70">
             Your orders will appear here once you make a purchase.
@@ -101,7 +101,7 @@ export function OrdersPage() {
                   Order placed
                 </p>
                 <p className="text-sm text-foreground mt-0.5">
-                  {new Date(order.createdAt).toLocaleDateString("en-US", {
+                  {new Date(order.createdAt).toLocaleDateString((navigator as any)?.languages ?? "en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",

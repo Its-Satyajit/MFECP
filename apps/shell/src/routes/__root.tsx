@@ -1,9 +1,11 @@
 import { authClient } from "@repo/auth-mf/auth-client";
 import { selectTotalItems, useCartStore } from "@repo/cart-store";
 import { Image } from "@repo/ui";
+import { Sun, Moon } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import type { QueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
+import { Suspense, useEffect, useState } from "react";
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -12,7 +14,6 @@ import {
   Scripts,
   useRouter,
 } from "@tanstack/react-router";
-import { Suspense } from "react";
 import { getSession, type SessionData } from "../lib/session";
 import appCss from "../styles.css?url";
 
@@ -76,6 +77,17 @@ function Layout() {
   });
 
   const router = useRouter();
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "light";
+    return (localStorage.getItem("theme") as "light" | "dark") || "light";
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   const handleLogout = async () => {
     await authClient.signOut();
     void router.navigate({ to: "/" });
@@ -122,9 +134,17 @@ function Layout() {
                 aria-label="Shopping cart"
               >
                 <span className="text-xs tracking-[0.15em] uppercase">Cart</span>
-                <ShoppingCart className="h-4 w-4" />
+                <ShoppingCart className="h-4 w-4" aria-hidden="true" />
                 <CartBadge />
               </Link>
+              <button
+                type="button"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="text-muted-foreground hover:text-foreground transition-colors bg-none border-none cursor-pointer p-1"
+                aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              >
+                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </button>
               <div className="h-3 w-px bg-border" />
               {isLoading ? (
                 <div className="h-3 w-14 bg-secondary animate-pulse" />
@@ -168,7 +188,7 @@ function Layout() {
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto pt-20 pb-16 px-6 lg:px-12 min-h-screen relative z-10">
+      <main id="main-content" className="max-w-7xl mx-auto pt-20 pb-16 px-6 lg:px-12 min-h-screen relative z-10">
         <Suspense
           fallback={
             <div className="pt-12 text-center text-sm text-muted-foreground uppercase tracking-[0.12em]">
@@ -200,6 +220,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-background focus:text-foreground focus:border focus:border-border focus:text-sm focus:uppercase focus:tracking-[0.12em]"
+        >
+          Skip to content
+        </a>
         {children}
         <Scripts />
       </body>

@@ -1,4 +1,5 @@
 import { selectTotalItems, selectTotalPrice, useCartStore } from "@repo/cart-store";
+import { isValidEmail } from "@repo/types";
 import { Alert, AlertDescription, Button, Image, Input, Label, Spinner } from "@repo/ui";
 import { useForm } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
@@ -84,7 +85,7 @@ export function CheckoutPage() {
 						Your cart is empty
 					</p>
 					<Link to="/">
-						<Button className="h-10 px-8 bg-primary text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-primary/90 transition-colors rounded-none border-none cursor-pointer">
+						<Button className="h-10 px-8 font-bold uppercase tracking-[0.12em] text-sm rounded-none">
 							Start Shopping
 						</Button>
 					</Link>
@@ -98,7 +99,7 @@ export function CheckoutPage() {
 			<div className="animate-in fade-in duration-500">
 				<div className="border border-border p-12 lg:p-16 text-center max-w-2xl mx-auto">
 					<div className="mx-auto flex items-center justify-center h-16 w-16 bg-primary mb-8">
-						<Check className="h-8 w-8 text-white" />
+						<Check aria-hidden="true" className="h-8 w-8 text-white" />
 					</div>
 					<h1
 						className="text-4xl md:text-5xl text-foreground mb-4 font-display"
@@ -113,7 +114,7 @@ export function CheckoutPage() {
 					</p>
 					<div>
 						<Link to="/">
-							<Button className="h-12 px-10 bg-primary text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-primary/90 transition-colors rounded-none border-none cursor-pointer">
+							<Button className="h-12 px-10 font-bold uppercase tracking-[0.12em] text-sm rounded-none">
 								Continue Shopping
 							</Button>
 						</Link>
@@ -179,7 +180,7 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
-										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors rounded-none"
+										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
 										<p className="text-xs text-primary mt-1">
@@ -192,14 +193,14 @@ export function CheckoutPage() {
 
 						<form.Field
 							name="email"
-							validators={{
-								onChange: ({ value }) =>
-									!value
-										? "Email is required"
-										: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-											? "Invalid email address"
-											: undefined,
-							}}
+                  validators={{
+                    onChange: ({ value }) =>
+                      !value
+                        ? "Email is required"
+                        : !isValidEmail(value)
+                          ? "Invalid email address"
+                          : undefined,
+                  }}
 						>
 							{(field) => (
 								<div>
@@ -216,7 +217,7 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
-										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors rounded-none"
+										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
 										<p className="text-xs text-primary mt-1">
@@ -248,7 +249,7 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
-										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors rounded-none"
+										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
 										<p className="text-xs text-primary mt-1">
@@ -281,7 +282,7 @@ export function CheckoutPage() {
 											value={field.state.value}
 											onBlur={field.handleBlur}
 											onChange={(e) => field.handleChange(e.target.value)}
-											className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors rounded-none"
+											className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 										/>
 										{field.state.meta.errors.length > 0 && (
 											<p className="text-xs text-primary mt-1">
@@ -312,7 +313,7 @@ export function CheckoutPage() {
 											value={field.state.value}
 											onBlur={field.handleBlur}
 											onChange={(e) => field.handleChange(e.target.value)}
-											className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors rounded-none"
+											className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 										/>
 										{field.state.meta.errors.length > 0 && (
 											<p className="text-xs text-primary mt-1">
@@ -333,8 +334,9 @@ export function CheckoutPage() {
 							{({ canSubmit, isSubmitting }) => (
 								<Button
 									type="submit"
-									className="w-full h-12 bg-primary text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-primary/90 transition-colors rounded-none border-none cursor-pointer mt-6"
+									className="w-full h-12 font-bold uppercase tracking-[0.12em] text-sm rounded-none mt-6"
 									disabled={!canSubmit || isSubmitting || processing}
+									aria-busy={processing}
 								>
 									{processing ? (
 										<span className="flex items-center justify-center gap-2">

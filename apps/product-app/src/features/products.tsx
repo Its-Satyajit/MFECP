@@ -131,13 +131,13 @@ export function ProductsPage() {
               placeholder="Search catalog..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full md:w-56 h-9 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary transition-colors uppercase tracking-[0.06em]"
+              className="w-full md:w-56 h-9 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors uppercase tracking-[0.06em]"
             />
           </div>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="h-9 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus:border-primary transition-colors uppercase tracking-[0.06em]"
+            className="h-9 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors uppercase tracking-[0.06em]"
           >
             <option value="all">All</option>
             {categories.map((cat) => (

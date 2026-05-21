@@ -1,4 +1,5 @@
 import { Alert, AlertDescription, Button, Input, Label } from "@repo/ui";
+import { isValidEmail } from "@repo/types";
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
@@ -91,7 +92,7 @@ export function RegisterPage() {
                   placeholder="Your name"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary transition-colors rounded-none"
+                  className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
                 />
                 {field.state.meta.errors ? (
                   <p className="text-xs text-primary mt-1">
@@ -105,13 +106,13 @@ export function RegisterPage() {
           <form.Field
             name="email"
             validators={{
-              onChange: ({ value }) =>
-                !value
-                  ? "Email is required"
-                  : !/\S+@\S+\.\S+/.test(value)
-                    ? "Invalid email format"
-                    : undefined,
-            }}
+                onChange: ({ value }) =>
+                  !value
+                    ? "Email is required"
+                    : !isValidEmail(value)
+                      ? "Invalid email format"
+                      : undefined,
+              }}
           >
             {(field) => (
               <div>
@@ -129,7 +130,7 @@ export function RegisterPage() {
                   placeholder="your@email.com"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary transition-colors rounded-none"
+                  className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
                 />
                 {field.state.meta.errors ? (
                   <p className="text-xs text-primary mt-1">
@@ -167,7 +168,7 @@ export function RegisterPage() {
                   placeholder="••••••••"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary transition-colors rounded-none"
+                  className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
                 />
                 {field.state.meta.errors ? (
                   <p className="text-xs text-primary mt-1">
@@ -182,7 +183,7 @@ export function RegisterPage() {
             {([canSubmit, isSubmitting]) => (
               <Button
                 type="submit"
-                className="w-full h-12 bg-primary text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-primary/90 transition-colors rounded-none border-none cursor-pointer"
+                className="w-full h-12 font-bold uppercase tracking-[0.12em] text-sm rounded-none"
                 disabled={!canSubmit || isSubmitting}
               >
                 {isSubmitting ? "Creating account..." : "Create account"}

@@ -165,7 +165,7 @@ export function ProductPage() {
 
           <Button
             type="button"
-            className="w-full h-12 bg-primary text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-primary/90 transition-colors rounded-none border-none cursor-pointer"
+            className="w-full h-12 font-bold uppercase tracking-[0.12em] text-sm rounded-none"
             onClick={() => void handleAddToBag()}
           >
             Add to Bag

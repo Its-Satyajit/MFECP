@@ -30,12 +30,12 @@ export function CartPage() {
 					</h1>
 				</div>
 				<div className="border border-border p-16 text-center">
-					<ShoppingCart className="mx-auto h-10 w-10 text-muted-foreground/70 mb-4" />
+					<ShoppingCart className="mx-auto h-10 w-10 text-muted-foreground/70 mb-4" aria-hidden="true" />
 					<p className="text-muted-foreground uppercase tracking-[0.12em] mb-6">
 						Your cart is empty
 					</p>
 					<Link to="/">
-						<Button className="h-10 px-8 bg-primary text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-primary/90 transition-colors rounded-none border-none cursor-pointer">
+						<Button className="h-10 px-8 font-bold uppercase tracking-[0.12em] text-sm rounded-none">
 							Continue Shopping
 						</Button>
 					</Link>
@@ -63,7 +63,7 @@ export function CartPage() {
 					onClick={clearCart}
 					className="text-xs uppercase tracking-[0.12em] text-muted-foreground/70 hover:text-primary transition-colors bg-none border-none cursor-pointer"
 				>
-					Clear all
+					Clear All
 				</button>
 			</div>
 
@@ -150,7 +150,7 @@ export function CartPage() {
 						<span className="tabular-nums">{formatUSD(totalPrice)}</span>
 					</div>
 					<Button
-						className="w-full h-12 bg-primary text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-primary/90 transition-colors rounded-none border-none cursor-pointer"
+						className="w-full h-12 font-bold uppercase tracking-[0.12em] text-sm rounded-none"
 						onClick={() => void router.navigate({ to: "/checkout" })}
 					>
 						Checkout

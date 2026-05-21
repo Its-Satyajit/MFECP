@@ -29,7 +29,7 @@ function StatCard({
 				<span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/70">
 					{label}
 				</span>
-				<Icon className="h-4 w-4 text-muted-foreground/70" />
+				<Icon aria-hidden="true" className="h-4 w-4 text-muted-foreground/70" />
 			</div>
 			<p
 				className="text-3xl md:text-4xl leading-none tracking-[-0.02em] text-foreground tabular-nums font-display"
@@ -155,7 +155,7 @@ export function DashboardPage() {
 									</p>
 									<div className="flex items-center gap-3 mt-0.5">
 										<div className="flex items-center gap-1">
-											<Star className="h-3 w-3 text-primary fill-primary" />
+											<Star aria-hidden="true" className="h-3 w-3 text-primary fill-primary" />
 											<span className="text-xs text-muted-foreground">
 												{product.rating?.rate ?? "—"}
 											</span>
@@ -184,7 +184,7 @@ export function DashboardPage() {
 								className="border border-border p-5 lg:p-6"
 							>
 								<div className="flex items-center gap-2 mb-2">
-									<Tag className="h-4 w-4 text-primary" />
+									<Tag aria-hidden="true" className="h-4 w-4 text-primary" />
 									<span className="text-xs uppercase tracking-[0.1em] text-muted-foreground">
 										{cat.name}
 									</span>
@@ -257,18 +257,15 @@ export function DashboardPage() {
 											}
 										/>
 									</div>
-									<div className="flex-1 min-w-0">
-										<p className="text-sm text-foreground truncate font-medium">
-											{user.name || "Unknown"}
-										</p>
-										<p className="text-xs text-muted-foreground mt-0.5 truncate">
-											{user.email}
-										</p>
-										<p className="text-xs text-muted-foreground mt-0.5 truncate">
-											{user.email}
-										</p>
-									</div>
-									<TrendingUp className="h-4 w-4 text-muted-foreground/70 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground truncate font-medium">
+                      {user.name || "Unknown"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                  <TrendingUp aria-hidden="true" className="h-4 w-4 text-muted-foreground/70 shrink-0" />
 								</div>
 							))}
 						</div>
