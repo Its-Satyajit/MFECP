@@ -181,7 +181,7 @@ export function LoginPage() {
               type="button"
               variant="outline"
               onClick={() => handleSocialSignIn("github")}
-              className="h-12 flex items-center justify-center gap-3 bg-white border border-border text-foreground hover:bg-secondary/50 transition-colors rounded-none cursor-pointer"
+              className="h-12 gap-3 rounded-none text-foreground"
             >
               <SiGithub className="h-5 w-5" />
               <span className="text-xs uppercase tracking-[0.12em]">GitHub</span>
@@ -191,7 +191,7 @@ export function LoginPage() {
               type="button"
               variant="outline"
               onClick={() => handleSocialSignIn("google")}
-              className="h-12 flex items-center justify-center gap-3 bg-white border border-border text-foreground hover:bg-secondary/50 transition-colors rounded-none cursor-pointer"
+              className="h-12 gap-3 rounded-none text-foreground"
             >
               <SiGoogle className="h-5 w-5" />
               <span className="text-xs uppercase tracking-[0.12em]">Google</span>
@@ -201,7 +201,7 @@ export function LoginPage() {
               type="button"
               variant="outline"
               onClick={() => handleSocialSignIn("facebook")}
-              className="h-12 flex items-center justify-center gap-3 bg-white border border-border text-foreground hover:bg-secondary/50 transition-colors rounded-none cursor-pointer"
+              className="h-12 gap-3 rounded-none text-foreground"
             >
               <SiFacebook className="h-5 w-5" />
               <span className="text-xs uppercase tracking-[0.12em]">Facebook</span>

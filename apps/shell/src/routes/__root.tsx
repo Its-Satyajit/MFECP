@@ -130,7 +130,7 @@ function Layout() {
             <div className="flex items-center gap-6">
               <Link
                 to="/cart"
-                className="relative text-foreground hover:text-primary transition-colors group flex items-center gap-2 no-underline"
+                className="relative text-foreground hover:text-primary transition-colors group flex items-center gap-2 no-underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                 aria-label="Shopping cart"
               >
                 <span className="text-xs tracking-[0.15em] uppercase">Cart</span>
@@ -140,7 +140,7 @@ function Layout() {
               <button
                 type="button"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-muted-foreground hover:text-foreground transition-colors bg-none border-none cursor-pointer p-1"
+                className="text-muted-foreground hover:text-foreground transition-colors bg-none border-none cursor-pointer p-1 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                 aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
               >
                 {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -171,7 +171,7 @@ function Layout() {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="text-xs tracking-[0.15em] uppercase text-foreground hover:text-primary transition-colors bg-none border-none cursor-pointer"
+                    className="text-xs tracking-[0.15em] uppercase text-foreground hover:text-primary transition-colors bg-none border-none cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
                     Logout
                   </button>
