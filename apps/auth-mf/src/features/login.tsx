@@ -27,6 +27,7 @@ export function LoginPage() {
         return;
       }
 
+      window.dispatchEvent(new CustomEvent("session-updated"));
       const search = new URLSearchParams(window.location.search);
       const redirect = search.get("redirect") || "/dashboard";
       void router.navigate({ to: redirect as any });

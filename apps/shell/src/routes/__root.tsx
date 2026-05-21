@@ -4,7 +4,7 @@ import { Image } from "@repo/ui";
 import { Sun, Moon } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import type { QueryClient } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Suspense, useEffect, useState } from "react";
 import {
   createRootRouteWithContext,
@@ -69,6 +69,7 @@ export const Route = createRootRouteWithContext<{
 });
 
 function Layout() {
+  const queryClient = useQueryClient();
   const { data: session, isLoading } = useQuery<SessionData | null>({
     queryKey: ["session"],
     queryFn: () => getSession(),
@@ -83,6 +84,12 @@ function Layout() {
   });
 
   useEffect(() => {
+    const handler = () => queryClient.invalidateQueries({ queryKey: ["session"] });
+    window.addEventListener("session-updated", handler);
+    return () => window.removeEventListener("session-updated", handler);
+  }, [queryClient]);
+
+  useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("dark", theme === "dark");
     localStorage.setItem("theme", theme);
@@ -90,6 +97,7 @@ function Layout() {
 
   const handleLogout = async () => {
     await authClient.signOut();
+    queryClient.setQueryData(["session"], null);
     void router.navigate({ to: "/" });
   };
 

@@ -28,6 +28,7 @@ export function RegisterPage() {
         return;
       }
 
+      window.dispatchEvent(new CustomEvent("session-updated"));
       void router.navigate({ to: "/dashboard" });
     },
   });

@@ -18,6 +18,7 @@ export default defineConfig({
 				"react/jsx-dev-runtime": { singleton: true, version: "19.2.6", requiredVersion: "^19.2.6" },
 				"react-dom/client": { singleton: true, version: "19.2.6", requiredVersion: "^19.2.6" },
 				"@tanstack/react-form": { singleton: true },
+				"@tanstack/react-router": { singleton: true },
 				"lucide-react": { singleton: true, version: "1.16.0", requiredVersion: "*" },
 				"@icons-pack/react-simple-icons": { singleton: true, version: "13.13.0", requiredVersion: "*" },
 				"@repo/ui": { singleton: true, version: "1.0.0", requiredVersion: "*" },
