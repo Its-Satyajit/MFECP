@@ -82,11 +82,11 @@ export function CartPage() {
 							<div className="flex-1 min-w-0 flex flex-col justify-between">
 								<div>
 									<div className="flex items-start justify-between gap-4">
-										<h3
+										<h2
 											className="text-sm text-foreground truncate font-display"
 										>
 											{item.title}
-										</h3>
+										</h2>
 										<span className="text-sm text-foreground font-medium shrink-0 tabular-nums">
                     {formatUSD(item.price * item.quantity)}
 										</span>
@@ -144,7 +144,7 @@ export function CartPage() {
 							<span className="text-cyan">Free</span>
 						</div>
 					</div>
-					<div className="thick-divider mb-4" />
+					<Separator className="mb-4 h-[3px] bg-foreground" />
 					<div className="flex justify-between text-base text-foreground font-medium mb-8">
 						<span>Total</span>
 						<span className="tabular-nums">{formatUSD(totalPrice)}</span>

@@ -100,10 +100,12 @@ export function LoginPage() {
                     placeholder="your@email.com"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={field.state.meta.errors.length > 0}
+                    aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
                     className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
                   />
-                  {field.state.meta.errors ? (
-                    <p className="text-xs text-primary mt-1">
+                  {field.state.meta.errors.length > 0 ? (
+                    <p id={`${field.name}-error`} className="text-xs text-primary mt-1">
                       {field.state.meta.errors.join(", ")}
                     </p>
                   ) : null}
@@ -133,10 +135,12 @@ export function LoginPage() {
                     placeholder="••••••••"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={field.state.meta.errors.length > 0}
+                    aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
                     className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
                   />
-                  {field.state.meta.errors ? (
-                    <p className="text-xs text-primary mt-1">
+                  {field.state.meta.errors.length > 0 ? (
+                    <p id={`${field.name}-error`} className="text-xs text-primary mt-1">
                       {field.state.meta.errors.join(", ")}
                     </p>
                   ) : null}
