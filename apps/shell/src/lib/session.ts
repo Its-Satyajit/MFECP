@@ -1,3 +1,5 @@
+import { env } from "../env";
+
 export interface SessionData {
 	user: { id: string; name: string; email: string; image?: string | null };
 	session: { id: string; expiresAt: Date; token: string };
@@ -6,7 +8,7 @@ export interface SessionData {
 const baseUrl =
 	typeof window !== "undefined"
 		? window.location.origin
-		: "http://localhost:3000";
+		: env.SERVER_URL || "http://localhost:3000";
 
 export async function getSession(request?: Request): Promise<SessionData | null> {
 	const headers: Record<string, string> = {

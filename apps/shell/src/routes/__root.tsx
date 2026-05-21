@@ -1,3 +1,4 @@
+import { env } from "../env";
 import { authClient } from "@repo/auth-mf/auth-client";
 import { selectTotalItems, useCartStore } from "@repo/cart-store";
 import { Image } from "@repo/ui";
@@ -24,7 +25,7 @@ export const Route = createRootRouteWithContext<{
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Micro-Frontend E-Commerce Platform — Catalog" },
+      { title: env.VITE_APP_TITLE ? `${env.VITE_APP_TITLE} — Catalog` : "Micro-Frontend E-Commerce Platform — Catalog" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -111,7 +112,7 @@ function Layout() {
                 <span
                   className="text-xl tracking-[0.18em] uppercase text-foreground font-display"
                 >
-                  Micro-Frontend E-Commerce Platform
+                  {env.VITE_APP_TITLE || "Micro-Frontend E-Commerce Platform"}
                 </span>
               </Link>
               <div className="hidden md:flex items-center gap-8">
