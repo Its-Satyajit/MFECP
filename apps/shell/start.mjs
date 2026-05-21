@@ -1,4 +1,5 @@
 import { spawn, execSync } from "node:child_process";
+import { copyFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dirname, "../..");
@@ -29,12 +30,22 @@ function onExit() {
 process.on("SIGINT", onExit);
 process.on("SIGTERM", onExit);
 
-// Run pending DB migrations before starting
+// Run pending DB migrations
 console.log("\n[SHELL] Running database migrations...\n");
 try {
 	execSync("pnpm exec drizzle-kit migrate", { cwd: DB_DIR, stdio: "inherit" });
 } catch {
 	console.log("[SHELL] Migration skipped or already applied.");
+}
+
+// Sync the DB to the shell's working directory so both
+// the built server (process.cwd() == SHELL_DIR) and the
+// migration (ran from DB_DIR) use the same database.
+const dbSrc = resolve(DB_DIR, "local.db");
+const dbDst = resolve(SHELL_DIR, "local.db");
+if (existsSync(dbSrc)) {
+	copyFileSync(dbSrc, dbDst);
+	console.log("[SHELL] Database synced to shell directory.");
 }
 
 // Start MFE preview servers

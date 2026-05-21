@@ -1,4 +1,4 @@
-import { createEnv, authServerSchema, dbServerSchema } from "@repo/env";
+import { createEnv, authServerSchema } from "@repo/env";
 import { z } from "zod";
 
 const jsoningApiUrl = z.string().url().default("https://api.jsoning.com/mock/public");
@@ -13,7 +13,6 @@ const remoteDashboardUrl = z.string().url().default("http://localhost:3005");
 
 const shellServerSchema = {
 	...authServerSchema,
-	...dbServerSchema,
 	JSONING_API_URL: jsoningApiUrl,
 	SERVER_URL: serverUrl,
 };

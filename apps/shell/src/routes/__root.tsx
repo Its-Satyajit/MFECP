@@ -1,6 +1,4 @@
 import { authClient } from "@repo/auth-mf/auth-client";
-import { selectTotalItems, useCartStore } from "@repo/cart-store";
-import { Image } from "@repo/ui";
 import type { QueryClient } from "@tanstack/react-query";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -12,8 +10,9 @@ import {
 	useRouter,
 } from "@tanstack/react-router";
 import { Menu, Moon, ShoppingCart, Sun, X } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
-import { env } from "../env";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
+
+const CartBadge = lazy(() => import("../components/cart-badge").then((m) => ({ default: m.CartBadge })));
 import { getSession, type SessionData } from "../lib/session";
 import appCss from "../styles.css?url";
 
@@ -25,9 +24,7 @@ export const Route = createRootRouteWithContext<{
 			{ charSet: "utf-8" },
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
 			{
-				title: env.VITE_APP_TITLE
-					? `${env.VITE_APP_TITLE} — Catalog`
-					: "Micro-Frontend E-Commerce Platform — Catalog",
+				title: "Micro-Frontend E-Commerce Platform — Catalog",
 			},
 		],
 		links: [
@@ -128,7 +125,7 @@ function Layout() {
 								className="flex-shrink-0 flex items-center group no-underline"
 							>
 								<span className="text-sm sm:text-lg md:text-xl tracking-[0.18em] uppercase text-foreground font-display">
-									{env.VITE_APP_TITLE || "MFECP"}
+									MFECP
 								</span>
 							</Link>
 							<div className="hidden md:flex items-center gap-8">
@@ -162,7 +159,7 @@ function Layout() {
 									Cart
 								</span>
 								<ShoppingCart className="h-4 w-4" aria-hidden="true" />
-								<CartBadge />
+								<Suspense fallback={null}><CartBadge /></Suspense>
 							</Link>
 							<button
 								type="button"
@@ -183,20 +180,10 @@ function Layout() {
 								<div className="flex items-center gap-3">
 									<div className="hidden sm:flex items-center gap-2">
 										<div className="h-7 w-7 rounded-full bg-secondary border border-border overflow-hidden shrink-0 flex items-center justify-center">
-											<Image
+											<UserAvatar
 												src={session?.user?.image}
-												alt=""
-												layout="fullWidth"
-												className="h-full w-full object-cover"
-												fallback={
-													<span className="text-[10px] font-medium text-muted-foreground uppercase">
-														{(
-															session?.user?.name ||
-															session?.user?.email ||
-															"U"
-														).charAt(0)}
-													</span>
-												}
+												name={session?.user?.name}
+												email={session?.user?.email}
 											/>
 										</div>
 										<span className="text-xs tracking-[0.08em] text-muted-foreground">
@@ -268,13 +255,30 @@ function Layout() {
 	);
 }
 
-function CartBadge() {
-	const totalItems = useCartStore(selectTotalItems);
-	if (totalItems === 0) return null;
+function UserAvatar({
+	src,
+	name,
+	email,
+}: {
+	src?: string | null;
+	name?: string;
+	email?: string;
+}) {
+	const [error, setError] = useState(false);
+	if (!src || error) {
+		return (
+			<span className="text-[10px] font-medium text-muted-foreground uppercase">
+				{(name || email || "U").charAt(0)}
+			</span>
+		);
+	}
 	return (
-		<span className="absolute -top-2 -right-3 flex items-center justify-center h-4 min-w-[1rem] px-1 bg-primary text-[9px] font-bold text-white leading-none tracking-[0.02em]">
-			{totalItems > 99 ? "99+" : totalItems}
-		</span>
+		<img
+			src={src}
+			alt=""
+			className="h-full w-full object-cover"
+			onError={() => setError(true)}
+		/>
 	);
 }
 
