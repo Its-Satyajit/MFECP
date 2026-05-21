@@ -1,4 +1,5 @@
 import type { Product } from "@repo/types";
+import { retryGet } from "@repo/types";
 import { Image, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
@@ -30,11 +31,11 @@ export function ProductsPage() {
   };
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["products"],
-    queryFn: async () => {
+    queryFn: () => retryGet(async () => {
       const { data, error } = await treatyClient.api.products.get();
       if (error) throw error;
       return data;
-    },
+    }),
   });
 
   const categories = useMemo(() => {
@@ -129,6 +130,7 @@ export function ProductsPage() {
             <input
               type="text"
               placeholder="Search catalog..."
+              aria-label="Search catalog"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full md:w-56 h-9 bg-white border border-border px-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors uppercase tracking-[0.06em]"
@@ -137,6 +139,7 @@ export function ProductsPage() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
+            aria-label="Filter by category"
             className="h-9 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors uppercase tracking-[0.06em]"
           >
             <option value="all">All</option>

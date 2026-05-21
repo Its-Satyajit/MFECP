@@ -1,10 +1,10 @@
 import { selectTotalItems, selectTotalPrice, useCartStore } from "@repo/cart-store";
-import { Button, Image } from "@repo/ui";
+import { Button, Image, Separator } from "@repo/ui";
 import { Link, useRouter } from "@tanstack/react-router";
 import { ShoppingCart } from "lucide-react";
 
 const formatUSD = (amount: number) =>
-  new Intl.NumberFormat((navigator as any)?.languages ?? "en-US", {
+  new Intl.NumberFormat((navigator as unknown as { languages?: readonly string[] })?.languages ?? "en-US", {
     style: "currency",
     currency: "USD",
   }).format(amount);

@@ -1,14 +1,14 @@
 import { selectTotalItems, selectTotalPrice, useCartStore } from "@repo/cart-store";
 import { isValidEmail } from "@repo/types";
-import { Alert, AlertDescription, Button, Image, Input, Label, Spinner } from "@repo/ui";
-import { useForm } from "@tanstack/react-form";
+import { Alert, AlertDescription, Button, Image, Input, Label, Separator, Spinner } from "@repo/ui";
+import { useForm, useStore } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { treatyClient } from "../lib/api";
 
 const formatUSD = (amount: number) =>
-  new Intl.NumberFormat((navigator as any)?.languages ?? "en-US", {
+  new Intl.NumberFormat((navigator as unknown as { languages?: readonly string[] })?.languages ?? "en-US", {
     style: "currency",
     currency: "USD",
   }).format(amount);
@@ -68,6 +68,17 @@ export function CheckoutPage() {
 			}
 		},
 	});
+
+	const isDirty = useStore(form.store, (state) => state.isDirty);
+	useEffect(() => {
+		if (!isDirty) return;
+		const onBeforeUnload = (e: BeforeUnloadEvent) => {
+			e.preventDefault();
+			e.returnValue = "";
+		};
+		window.addEventListener("beforeunload", onBeforeUnload);
+		return () => window.removeEventListener("beforeunload", onBeforeUnload);
+	}, [isDirty]);
 
 	if (items.length === 0 && !submitted) {
 		return (
@@ -180,10 +191,12 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
+										aria-invalid={field.state.meta.errors.length > 0}
+										aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
 										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
-										<p className="text-xs text-primary mt-1">
+										<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 											{field.state.meta.errors[0]}
 										</p>
 									)}
@@ -217,10 +230,12 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
+										aria-invalid={field.state.meta.errors.length > 0}
+										aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
 										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
-										<p className="text-xs text-primary mt-1">
+										<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 											{field.state.meta.errors[0]}
 										</p>
 									)}
@@ -249,10 +264,12 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
+										aria-invalid={field.state.meta.errors.length > 0}
+										aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
 										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
-										<p className="text-xs text-primary mt-1">
+										<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 											{field.state.meta.errors[0]}
 										</p>
 									)}
@@ -282,10 +299,12 @@ export function CheckoutPage() {
 											value={field.state.value}
 											onBlur={field.handleBlur}
 											onChange={(e) => field.handleChange(e.target.value)}
+											aria-invalid={field.state.meta.errors.length > 0}
+											aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
 											className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 										/>
 										{field.state.meta.errors.length > 0 && (
-											<p className="text-xs text-primary mt-1">
+											<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 												{field.state.meta.errors[0]}
 											</p>
 										)}
@@ -313,10 +332,12 @@ export function CheckoutPage() {
 											value={field.state.value}
 											onBlur={field.handleBlur}
 											onChange={(e) => field.handleChange(e.target.value)}
+											aria-invalid={field.state.meta.errors.length > 0}
+											aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
 											className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 										/>
 										{field.state.meta.errors.length > 0 && (
-											<p className="text-xs text-primary mt-1">
+											<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 												{field.state.meta.errors[0]}
 											</p>
 										)}
@@ -383,7 +404,7 @@ export function CheckoutPage() {
                 </div>
               ))}
             </div>
-            <div className="thick-divider my-6" />
+            <Separator className="my-6 h-[3px] bg-foreground" />
             <div className="flex flex-col gap-2 text-sm mb-4">
               <div className="flex justify-between text-muted-foreground">
                 <span>Items ({totalItems})</span>
@@ -394,7 +415,7 @@ export function CheckoutPage() {
                 <span className="text-cyan">Free</span>
               </div>
             </div>
-            <div className="thin-divider my-4" />
+            <Separator className="my-4" />
             <div className="flex justify-between text-base text-foreground font-medium">
               <span>Total</span>
               <span className="tabular-nums">{formatUSD(totalPrice)}</span>

@@ -1,12 +1,13 @@
 import type { Order } from "@repo/types";
-import { Image, Skeleton } from "@repo/ui";
+import { retryGet } from "@repo/types";
+import { Image, Separator, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
 
 import { Package } from "lucide-react";
 import { treatyClient } from "../lib/api";
 
 const formatUSD = (amount: number) =>
-  new Intl.NumberFormat((navigator as any)?.languages ?? "en-US", {
+  new Intl.NumberFormat((navigator as unknown as { languages?: readonly string[] })?.languages ?? "en-US", {
     style: "currency",
     currency: "USD",
   }).format(amount);
@@ -14,11 +15,11 @@ const formatUSD = (amount: number) =>
 export function OrdersPage() {
   const { data: orders = [], isLoading } = useQuery<Order[]>({
     queryKey: ["orders"],
-    queryFn: async () => {
+    queryFn: () => retryGet(async () => {
       const { data, error } = await treatyClient.api.orders.get();
       if (error) throw error;
       return data;
-    },
+    }),
   });
 
   if (isLoading) {
@@ -41,7 +42,7 @@ export function OrdersPage() {
                   <Skeleton className="h-5 w-20 bg-secondary" />
                 </div>
               </div>
-              <div className="thin-divider" />
+              <Separator />
               {Array.from({ length: 2 }).map((_, j) => (
                 <div key={j} className="flex items-center gap-3">
                   <Skeleton className="h-12 w-12 bg-secondary" />
@@ -101,7 +102,7 @@ export function OrdersPage() {
                   Order placed
                 </p>
                 <p className="text-sm text-foreground mt-0.5">
-                  {new Date(order.createdAt).toLocaleDateString((navigator as any)?.languages ?? "en-US", {
+                  {new Date(order.createdAt).toLocaleDateString((navigator as unknown as { languages?: readonly string[] })?.languages ?? "en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",

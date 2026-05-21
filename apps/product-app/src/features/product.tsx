@@ -1,6 +1,7 @@
 import { useCartStore } from "@repo/cart-store";
 import type { Product } from "@repo/types";
-import { Button, Image, Rating, Skeleton } from "@repo/ui";
+import { retryGet } from "@repo/types";
+import { Button, Image, Rating, Separator, Skeleton } from "@repo/ui";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "@tanstack/react-router";
 import { treatyClient } from "../lib/api";
@@ -18,8 +19,8 @@ export function ProductPage() {
     queryKey: ["product-with-related", id],
     queryFn: async () => {
       const [productRes, allProductsRes] = await Promise.all([
-        treatyClient.api.products({ id }).get(),
-        treatyClient.api.products.get(),
+        retryGet(() => treatyClient.api.products({ id }).get()),
+        retryGet(() => treatyClient.api.products.get()),
       ]);
 
       if (productRes.error) throw productRes.error;
@@ -110,7 +111,7 @@ export function ProductPage() {
   return (
     <div className="animate-in fade-in duration-500">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-border">
-        <div className="lg:col-span-7 border-b lg:border-b-0 lg:border-r border-border p-10 lg:p-14 flex items-center justify-center min-h-[50vh] lg:min-h-[70vh] bg-secondary">
+        <div className="lg:col-span-7 border-b lg:border-b-0 lg:border-r border-border p-10 lg:p-14 flex items-center justify-center aspect-[4/3] lg:aspect-auto lg:min-h-[70vh] bg-secondary">
           <Image
             src={product.image_url}
             alt={product.name}
@@ -132,7 +133,7 @@ export function ProductPage() {
             {product.category}
           </p>
 
-          <div className="thick-divider my-5" />
+          <Separator className="my-5 h-[3px] bg-foreground" />
 
           <p
             className="text-3xl font-medium text-foreground mb-5 tabular-nums font-sans"

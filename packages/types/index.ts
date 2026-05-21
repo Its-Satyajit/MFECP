@@ -118,3 +118,19 @@ export interface JsoningCart {
 	date: string;
 	status: string;
 }
+
+export async function retryGet<T>(
+  fn: () => Promise<T>,
+  maxRetries = 2,
+): Promise<T> {
+  let lastError: unknown;
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (i < maxRetries) await new Promise((r) => setTimeout(r, 1000 * 2 ** i));
+    }
+  }
+  throw lastError;
+}

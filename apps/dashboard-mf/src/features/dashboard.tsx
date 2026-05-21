@@ -1,4 +1,5 @@
 import type { DashboardMetrics } from "@repo/types";
+import { retryGet } from "@repo/types";
 import { Image, Skeleton } from "@repo/ui";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -56,11 +57,11 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 export function DashboardPage() {
 	const { data, isLoading } = useQuery<DashboardMetrics>({
 		queryKey: ["dashboard-metrics"],
-		queryFn: async () => {
+		queryFn: () => retryGet(async () => {
 			const { data, error } = await treatyClient.api.dashboard.metrics.get();
 			if (error) throw error;
 			return data;
-		},
+		}),
 	});
 
 	if (isLoading) {
