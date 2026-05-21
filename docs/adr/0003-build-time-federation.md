@@ -1,6 +1,6 @@
 # ADR 0003: Build-time Federation over Runtime Dynamic Federation
 
-**Status:** Accepted
+**Status:** Superseded by ADR 0004
 **Date:** 2026-05-15
 
 ## Context

@@ -2,6 +2,6 @@ import { authServerSchema, createEnv } from "@repo/env";
 
 export const env = createEnv({
 	server: authServerSchema,
-	runtimeEnv: process.env,
+	runtimeEnv: typeof process !== "undefined" ? process.env : {},
 	emptyStringAsUndefined: true,
 });

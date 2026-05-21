@@ -27,7 +27,7 @@ function Image({
 			fallback ?? (
 				<div
 					className={cn(
-						"flex items-center justify-center bg-[#eae6de] text-[#6b6760]",
+						"flex items-center justify-center bg-secondary text-muted-foreground",
 						className,
 					)}
 				>

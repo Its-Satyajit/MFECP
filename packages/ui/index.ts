@@ -13,5 +13,6 @@ export * from "./components/ui/select";
 export * from "./components/ui/select";
 export * from "./components/ui/separator";
 export * from "./components/ui/skeleton";
+export * from "./components/ui/spinner";
 export * from "./components/ui/table";
 export * from "./lib/utils";

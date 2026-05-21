@@ -14,7 +14,7 @@ function createDb() {
 		env.TURSO_DATABASE_URL ??
 		`file:${resolve(__dirname, "local.db")}`;
 
-	const opts: Record<string, string> = { url };
+	const opts: { url: string; authToken?: string } = { url };
 	if (env.TURSO_AUTH_TOKEN) opts.authToken = env.TURSO_AUTH_TOKEN;
 
 	return drizzle(createClient(opts));

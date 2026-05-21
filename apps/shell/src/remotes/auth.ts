@@ -1,10 +1,13 @@
-import { clientLazy } from "./client-lazy";
-import { LoginPage as AuthLoginPage, RegisterPage as AuthRegisterPage } from "@repo/auth-mf";
+import { clientLazy, loadMfRemote } from "./client-lazy";
 
 export const LoginPage = clientLazy(() =>
-	Promise.resolve({ default: AuthLoginPage })
+	loadMfRemote("auth/auth").then((m: any) => ({
+		default: m.LoginPage || m.default?.LoginPage || m.default,
+	})),
 );
 
 export const RegisterPage = clientLazy(() =>
-	Promise.resolve({ default: AuthRegisterPage })
+	loadMfRemote("auth/auth").then((m: any) => ({
+		default: m.RegisterPage || m.default?.RegisterPage || m.default,
+	})),
 );

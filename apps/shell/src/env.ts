@@ -4,6 +4,6 @@ export const env = createEnv({
 	server: shellServerSchema,
 	clientPrefix: "VITE_",
 	client: shellClientSchema,
-	runtimeEnv: import.meta.env,
+	runtimeEnv: typeof process !== "undefined" ? { ...process.env, ...import.meta.env } : import.meta.env,
 	emptyStringAsUndefined: true,
 });

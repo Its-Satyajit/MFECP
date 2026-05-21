@@ -56,18 +56,21 @@ A metrics and analytics hub visible to authenticated Users. Displays product sta
 
 ## Micro Frontend (MFE)
 
-An independently deployable build artifact that exposes page-level React components via Module Federation at runtime. MFEs own business logic and UI for a domain. They have no router, no API handler, no standalone layout, and no SSR — the Shell owns all of those. The Shell loads MFE components as runtime remotes via `@module-federation/vite`. MFEs are independently versioned and independently built, running on separate ports in development.
-
+An independently deployable build artifact that exposes page-level React components via Module Federation at runtime. MFEs own business logic and UI for a domain. They have no router, no API handler, no standalone layout, and no SSR — the Shell owns all of those. The Shell loads MFE components as runtime remotes via `@module-federation/enhanced/runtime` — not imported at build time. Each MFE runs on its own port in development (3001–3005) and exposes components via `remoteEntry.js`. The Shell hydrates MFE components client-side only.
 _Avoid_: Remote app, sub-app, microservice frontend
 
 ## Shell
 
-The host application that owns SSR, routing, authentication sessions, API proxying, layout, and hydration. Loads MFE components as runtime Module Federation remotes (auth-app, product-app, cart-app, order-app, dashboard-mf). Renders layout server-side; MFE components load client-side.
+The host application that owns SSR, routing, authentication sessions, API proxying, layout, and hydration. Loads MFE components as runtime Module Federation remotes via `@module-federation/enhanced/runtime`. Renders layout server-side; MFE components load client-side via `clientLazy()`. All auth guards are centralized in TanStack Router `beforeLoad`.
 _Avoid_: Host app, container
 
 ## Auth App
 
 The MFE responsible for User Authentication. Exposes `LoginPage` and `RegisterPage` components. Uses Better Auth for authentication with email/password and social providers (GitHub, Google, Facebook). Runs on port 3001.
+
+## Dashboard MFE
+
+The MFE responsible for analytics. Exposes `DashboardPage` (metrics, revenue snapshots, top-rated products, category breakdowns). Protected — requires authentication. Runs on port 3005.
 
 ## Product App
 
