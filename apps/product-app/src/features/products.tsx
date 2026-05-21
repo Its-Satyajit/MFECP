@@ -140,7 +140,7 @@ export function ProductsPage() {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             aria-label="Filter by category"
-            className="h-9 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors uppercase tracking-[0.06em]"
+            className="h-9 shrink-0 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors uppercase tracking-[0.06em]"
           >
             <option value="all">All</option>
             {categories.map((cat) => (

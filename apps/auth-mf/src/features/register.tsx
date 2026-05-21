@@ -44,7 +44,7 @@ export function RegisterPage() {
         </h1>
       </div>
 
-      <div className="max-w-xl border border-border p-8 lg:p-12">
+      <div className="max-w-xl mx-auto border border-border p-8 lg:p-12">
         <h2 className="text-lg text-foreground mb-6 font-display">
           CREATE ACCOUNT
         </h2>
