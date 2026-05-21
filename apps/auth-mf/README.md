@@ -14,7 +14,13 @@ Owns authentication domain logic: login, registration, Better Auth client and se
 
 ## Federation
 
-Exposes `./auth` via `@module-federation/vite`. Produces `remoteEntry.js` at build time. Imported by Shell as `@repo/auth-mf`.
+Exposes `./auth` via `@module-federation/vite`. Produces `remoteEntry.js` at build time. Loaded by Shell as a runtime remote.
+
+## Features
+
+- **Email/password auth** — Sign-up and sign-in with credentials
+- **Social providers** — GitHub, Google, Facebook OAuth login
+- **Route protection** — Shell enforces auth guards via `beforeLoad` on protected routes
 
 ## Dev
 

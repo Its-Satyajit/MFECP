@@ -1,6 +1,6 @@
 # `@repo/shell` — SSR Host
 
-The shell is a TanStack Start application that owns SSR, routing, authentication, API proxying, layout, and hydration. It imports page-level components from MFE packages at build time.
+The shell is a TanStack Start application that owns SSR, routing, authentication, API proxying, layout, and hydration. It loads MFE components at runtime via `@module-federation/enhanced/runtime`.
 
 ## Architecture
 
@@ -17,38 +17,45 @@ flowchart LR
     Routes -->|"/dashboard"| D["DashboardPage"]
     Routes -->|"/orders"| O["OrdersPage"]
     Routes -->|"/api/*"| E["Elysia API Handler"]
-    E --> FSA[("FakeStoreAPI")]
-    E --> DB[("Turso DB")]
+    E --> Jsoning[("jsoning.com API")]
+    E --> DB[("Local SQLite")]
     subgraph Auth["Auth Guard (_protected)"]
         Session["useQuery(['session'])"]
         Redirect["Redirect to /login"]
     end
-    D & O --> Auth
+    D & O & CO --> Auth
 ```
 
 ## Routes
 
 | Path | Component | Source | Auth |
-|---|---|---|---|
-| `/` | ProductsPage | `@repo/commerce-mf` | No |
-| `/product/$id` | ProductPage | `@repo/commerce-mf` | No |
-| `/cart` | CartPage | `@repo/commerce-mf` | No |
-| `/checkout` | CheckoutPage | `@repo/commerce-mf` | Yes |
-| `/login` | LoginPage | `@repo/auth-mf` | No |
-| `/register` | RegisterPage | `@repo/auth-mf` | No |
-| `/dashboard` | DashboardPage | `@repo/dashboard-mf` | Yes |
-| `/orders` | OrdersPage | `@repo/dashboard-mf` | Yes |
+|---|---|---|---|---|
+| `/` | ProductsPage | `product-app` | No |
+| `/product/$id` | ProductPage | `product-app` | No |
+| `/cart` | CartPage | `cart-app` | No |
+| `/checkout` | CheckoutPage | `cart-app` | Yes |
+| `/login` | LoginPage | `auth-mf` | No |
+| `/register` | RegisterPage | `auth-mf` | No |
+| `/dashboard` | DashboardPage | `dashboard-mf` | Yes |
+| `/orders` | OrdersPage | `order-app` | Yes |
 | `/api/$` | Elysia handler | Shell | Varies |
 
 ## API
 
-A single Elysia API server (`@repo/api-server`) runs inside `src/routes/api.$.ts`. It proxies FakeStoreAPI endpoints and mounts Better Auth for session management. MFE components call it via Eden Treaty.
+A single Elysia API server (`@repo/api-server`) runs inside `src/routes/api.$.ts`. It proxies jsoning.com API endpoints and mounts Better Auth for session management. MFE components call it via Eden Treaty.
 
 ## Dev
 
 ```bash
 pnpm --filter @repo/shell dev    # Local dev on :3000
 pnpm dev                          # All apps via turbo
+```
+
+## Production
+
+```bash
+pnpm build
+node start.mjs                    # Runs migrations, starts preview servers on ports 3000-3005
 ```
 
 ## See Also
