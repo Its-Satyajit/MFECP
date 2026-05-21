@@ -1,15 +1,10 @@
 import { federation } from "@module-federation/vite";
-import babel from "@rolldown/plugin-babel";
-import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
+import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
 	plugins: [
-		viteReact({
-			babel: {
-				presets: [reactCompilerPreset()],
-			},
-		}),
+		viteReact({}),
 		federation({
 			name: "cart",
 			filename: "remoteEntry.js",
@@ -17,14 +12,16 @@ export default defineConfig({
 				"./cart": "./src/export.ts",
 			},
 			shared: {
-				react: { singleton: true },
-				"react-dom": { singleton: true },
-				"react/jsx-runtime": { singleton: true },
-				"react/jsx-dev-runtime": { singleton: true },
-				"react-dom/client": { singleton: true },
+				react: { singleton: true, version: "19.2.6", requiredVersion: "^19.2.6" },
+				"react-dom": { singleton: true, version: "19.2.6", requiredVersion: "^19.2.6" },
+				"react/jsx-runtime": { singleton: true, version: "19.2.6", requiredVersion: "^19.2.6" },
+				"react/jsx-dev-runtime": { singleton: true, version: "19.2.6", requiredVersion: "^19.2.6" },
+				"react-dom/client": { singleton: true, version: "19.2.6", requiredVersion: "^19.2.6" },
 				"@repo/cart-store": { singleton: true },
 				"@tanstack/react-router": { singleton: true },
 				"@tanstack/react-form": { singleton: true },
+				"lucide-react": { singleton: true, version: "1.16.0", requiredVersion: "*" },
+				"@repo/ui": { singleton: true, version: "1.0.0", requiredVersion: "*" },
 			},
 			dts: false,
 		}),

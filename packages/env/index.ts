@@ -11,12 +11,6 @@ const googleClientId = z.string().optional();
 const googleClientSecret = z.string().optional();
 const facebookClientId = z.string().optional();
 const facebookClientSecret = z.string().optional();
-const databaseUrl = z.string().optional();
-const tursoDatabaseUrl = z.string().url().optional();
-const tursoAuthToken = z.string().optional();
-const serverUrl = z.string().url().optional();
-const viteApiUrl = z.string().url().optional();
-const viteAppTitle = z.string().min(1).optional();
 
 export const authServerSchema = {
 	BETTER_AUTH_SECRET: betterAuthSecret,
@@ -29,23 +23,4 @@ export const authServerSchema = {
 	FACEBOOK_CLIENT_SECRET: facebookClientSecret,
 };
 
-export const dbServerSchema = {
-	DATABASE_URL: databaseUrl,
-	TURSO_DATABASE_URL: tursoDatabaseUrl,
-	TURSO_AUTH_TOKEN: tursoAuthToken,
-};
-
-export const shellServerSchema = {
-	...authServerSchema,
-	...dbServerSchema,
-	SERVER_URL: serverUrl,
-};
-
-export const shellClientSchema = {
-	VITE_APP_TITLE: viteAppTitle,
-	VITE_API_URL: viteApiUrl,
-};
-
-export const commonClientSchema = {
-	VITE_API_URL: viteApiUrl,
-};
+export const dbServerSchema = {};

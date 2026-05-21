@@ -14,10 +14,12 @@ flowchart TB
         API["Elysia API Handler<br/>apps/shell/src/routes/api.$.ts"]
     end
 
-    subgraph MFEs["Micro Frontends (Build Artifacts)"]
-        AuthMF["@repo/auth-mf<br/>Login, Register<br/>Better Auth client + server"]
-        CommerceMF["@repo/commerce-mf<br/>Products, Product, Cart, Checkout<br/>Zustand cart store"]
-        DashboardMF["@repo/dashboard-mf<br/>Dashboard, Orders"]
+    subgraph MFEs["Micro Frontends (Runtime Remotes — port 3001-3005)"]
+        AuthMF["auth (port 3001)<br/>Login, Register"]
+        ProductMF["product (port 3002)<br/>Products, Product"]
+        CartMF["cart (port 3003)<br/>Cart, Checkout"]
+        OrderMF["order (port 3004)<br/>Orders"]
+        DashboardMF["dashboard (port 3005)<br/>Dashboard"]
     end
 
     subgraph Packages["Shared Packages"]
@@ -49,39 +51,36 @@ flowchart TB
     Shell --> Packages
 ```
 
-## Build-time Federation Flow
+## Runtime Federation Flow
 
 ```mermaid
 flowchart LR
-    subgraph Build["Build Process"]
-        direction TB
+    subgraph Build["Build"]
         MFE_SRC["MFE Source Code<br/>apps/auth-mf/src/*"] --> Vite["Vite 8 +<br/>@module-federation/vite"]
-        Vite --> RemoteEntry["remoteEntry.js<br/>+ chunk files<br/>→ apps/auth-mf/dist/"]
-
+        Vite --> RemoteEntry["remoteEntry.js<br/>+ chunk files<br/>→ dist/"]
         SHELL_SRC["Shell Source Code<br/>apps/shell/src/*"] --> SVite["Vite 8 +<br/>@tanstack/react-start/plugin"]
-        RemoteEntry --> SVite
-        SVite --> Bundle["Single Deployable Bundle<br/>apps/shell/dist/"]
+        SVite --> ShellBundle["Shell Bundle<br/>apps/shell/dist/"]
     end
 
-    subgraph Deploy["Deploy"]
-        Bundle --> Server["Production Server<br/>(Node via Nitro)"]
-    end
-
-    subgraph Runtime["Runtime"]
-        Server --> HTML["SSR HTML"]
-        Server --> Hydrate["Client Hydration"]
+    subgraph Runtime["Runtime (Browser)"]
+        ShellBundle --> Init["@module-federation/enhanced/runtime<br/>client-lazy.tsx"]
+        RemoteEntry --> Init
+        Init --> Lazy["React.lazy() → MFE components"]
+        Lazy --> Hydrate["Client Hydration"]
     end
 ```
 
-The Shell imports MFE components directly via workspace dependencies at build time:
+The Shell loads MFE components at runtime via `@module-federation/enhanced/runtime`:
 
-| Shell import | Resolves to |
-|---|---|
-| `import { LoginPage } from "@repo/auth-mf"` | `apps/auth-mf/src/export.ts` |
-| `import { ProductsPage } from "@repo/commerce-mf"` | `apps/commerce-mf/src/export.ts` |
-| `import { DashboardPage } from "@repo/dashboard-mf"` | `apps/dashboard-mf/src/export.ts` |
+| MFE | Remote name | Remote URL (dev) |
+|---|---|---|
+| Auth | `auth` | `http://localhost:3001/remoteEntry.js` |
+| Product | `product` | `http://localhost:3002/remoteEntry.js` |
+| Cart | `cart` | `http://localhost:3003/remoteEntry.js` |
+| Order | `order` | `http://localhost:3004/remoteEntry.js` |
+| Dashboard | `dashboard` | `http://localhost:3005/remoteEntry.js` |
 
-No runtime dynamic `import()`. The shell must rebuild to pick up new MFE versions.
+Remote URLs are configurable via environment variables. MFE components load client-side only — the shell renders `null` on the server and hydrates after `@module-federation/enhanced/runtime` initializes.
 
 ## SSR Request Lifecycle
 
@@ -97,7 +96,7 @@ sequenceDiagram
 
     Browser->>Router: GET /product/42
     Router->>SSR: Match route /product/$id
-    SSR->>SSR: Render React tree (Shell Layout + MFE components)
+    SSR->>SSR: Render React tree (Shell Layout — MFE placeholders render null)
     SSR->>Cache: Prefetch all useQuery calls
     Cache->>Treaty: treatyClient.api.products({id: 42}).get()
     Treaty->>Elysia: GET /api/products/42
@@ -106,10 +105,13 @@ sequenceDiagram
     Elysia-->>Treaty: Typed JSON response
     Treaty-->>Cache: Cached + serialized
     Cache-->>SSR: Data ready
-    SSR-->>Browser: Full HTML + dehydrated state (script)
-    Browser->>Browser: Hydrate (React + TanStack Query)
+    SSR-->>Browser: Full HTML (MFE slots empty) + dehydrated state
+    Browser->>Browser: Hydrate Shell layout
+    Browser->>Browser: @module-federation/enhanced/runtime initializes
+    Browser->>Browser: Load remoteEntry.js from MFE's URL
+    Browser->>Browser: React.lazy() loads MFE component
     Browser->>Cache: Restore dehydrated cache
-    Note over Browser,Cache: Client takes over — MFE components become interactive
+    Note over Browser,Cache: MFE component mounts and becomes interactive
 ```
 
 ### SSR Lifecycle Steps
@@ -137,10 +139,10 @@ flowchart TD
         Cookie["Set secure cookie"]
     end
 
-    subgraph Routes["Route Protection"]
+    subgraph Routes["Route Protection (centralized beforeLoad)"]
         Public["Public Routes<br/>/, /product/$id, /cart"]
-        Guard["_Protected Layout<br/>apps/shell/src/routes/_protected.tsx"]
-        Check["useQuery(['session'])<br/>getSession() → /api/session"]
+        Guard["beforeLoad guard<br/>applied to /dashboard, /orders, /checkout"]
+        Check["getSession() → /api/session"]
         LoginRedirect["Redirect to /login<br/>?redirect=current_path"]
     end
 
@@ -176,23 +178,23 @@ flowchart TD
 - **Server instance**: Better Auth configured with Drizzle adapter (SQLite) in `apps/auth-mf/src/lib/auth-instance.ts`. Supports email/password + GitHub, Google, Facebook OAuth.
 - **Client instance**: `createAuthClient()` in `apps/auth-mf/src/lib/auth-client.ts`. Used by LoginPage and RegisterPage.
 - **Session fetch**: `getSession()` in `apps/shell/src/lib/session.ts` calls `GET /api/session` (handled by Elysia in `packages/api-server/index.ts`) and forwards the cookie from the request.
-- **Route guard**: `apps/shell/src/routes/_protected.tsx` wraps `/dashboard` and `/orders`. Uses `useQuery` with `getSession()`. Redirects to `/login?redirect=...` if unauthenticated.
+- **Route guard**: Centralized in TanStack Router `beforeLoad` on protected routes (`/dashboard`, `/orders`, `/checkout`). Uses `getSession()` and redirects to `/login?redirect=...` if unauthenticated.
 - **Root layout**: `apps/shell/src/routes/__root.tsx` always fetches the session to show login/logout state and the cart badge in the nav bar.
 
 ## Checkout Flow
 
 ```mermaid
 flowchart TD
-    Cart["CartPage<br/>apps/commerce-mf/src/features/cart.tsx"] -->|"Click Checkout"| Navigate["Navigate to /checkout"]
+    Cart["CartPage<br/>apps/cart-app/src/features/cart.tsx"] -->|"Click Checkout"| Navigate["Navigate to /checkout"]
 
     Navigate --> Empty{"Cart Empty?"}
 
     Empty -->|"Yes"| EmptyState["Show Empty State<br/>Link back to /"]
-    Empty -->|"No"| Checkout["CheckoutPage<br/>apps/commerce-mf/src/features/checkout.tsx"]
+    Empty -->|"No"| Checkout["CheckoutPage<br/>apps/cart-app/src/features/checkout.tsx"]
 
-    Checkout --> AuthGate{"Authenticated?"}
-    AuthGate -->|"No — SSR redirect"| Login["/login<br/>?redirect=/checkout"]
-    AuthGate -->|"Yes"| Form["Shipping Form<br/>TanStack Form<br/>name, email, address, city, zip"]
+    Checkout --> AuthGate{"beforeLoad guard"}
+    AuthGate -->|"Not authenticated"| Login["/login<br/>?redirect=/checkout"]
+    AuthGate -->|"Authenticated"| Form["Shipping Form<br/>TanStack Form<br/>name, email, address, city, zip"]
 
     Form --> Validate{"Valid?"}
     Validate -->|"No"| FormErrors["Show Field Errors"]
@@ -346,22 +348,22 @@ flowchart TD
 | Language | TypeScript ^6.0 |
 | Linting | Biome 2.4 |
 | Testing | Vitest ^4.1 + Testing Library |
-| Federation | @module-federation/vite ^1.15 |
+| Federation | @module-federation/enhanced ^2.4 (runtime) + @module-federation/vite ^1.15 (remote builds) |
 | Runtime | Nitro nightly 3.0 |
 
 ## Route Map
 
-| Path | Component | Source | Auth Required |
-|---|---|---|---|
-| `/` | ProductsPage | `@repo/commerce-mf` | No |
-| `/product/$id` | ProductPage | `@repo/commerce-mf` | No |
-| `/cart` | CartPage | `@repo/commerce-mf` | No |
-| `/checkout` | CheckoutPage | `@repo/commerce-mf` | Yes |
-| `/login` | LoginPage | `@repo/auth-mf` | No (redirect if authed) |
-| `/register` | RegisterPage | `@repo/auth-mf` | No (redirect if authed) |
-| `/dashboard` | DashboardPage | `@repo/dashboard-mf` | Yes |
-| `/orders` | OrdersPage | `@repo/dashboard-mf` | Yes |
-| `/api/$` | Elysia handler | Shell | Varies |
+| Path | Component | Remote | Auth Required | Guard |
+|---|---|---|---|---|---|
+| `/` | ProductsPage | `product/product` | No | — |
+| `/product/$id` | ProductPage | `product/product` | No | — |
+| `/cart` | CartPage | `cart/cart` | No | — |
+| `/checkout` | CheckoutPage | `cart/cart` | Yes | `beforeLoad` |
+| `/login` | LoginPage | `auth/auth` | No (redirect if authed) | — |
+| `/register` | RegisterPage | `auth/auth` | No (redirect if authed) | — |
+| `/dashboard` | DashboardPage | `dashboard/dashboard` | Yes | `beforeLoad` |
+| `/orders` | OrdersPage | `order/order` | Yes | `beforeLoad` |
+| `/api/$` | Elysia handler | Shell | Varies | — |
 
 ## Project Structure
 
@@ -369,9 +371,11 @@ flowchart TD
 Micro-Frontend-E-Commerce-Platform/
 ├── apps/
 │   ├── shell/              # @repo/shell       SSR host (port 3000)
-│   ├── auth-mf/            # @repo/auth-mf     Auth MFE build artifact
-│   ├── commerce-mf/        # @repo/commerce-mf  Commerce MFE build artifact
-│   └── dashboard-mf/       # @repo/dashboard-mf Dashboard MFE build artifact
+│   ├── auth-mf/            # @repo/auth-mf     Auth MFE (port 3001)
+│   ├── product-app/        # @repo/product-app  Product MFE (port 3002)
+│   ├── cart-app/           # @repo/cart-app     Cart MFE (port 3003)
+│   ├── order-app/          # @repo/order-app    Order MFE (port 3004)
+│   └── dashboard-mf/       # @repo/dashboard-mf Dashboard MFE (port 3005)
 ├── packages/
 │   ├── api-server/         # @repo/api-server   Elysia API app instance
 │   ├── db/                 # @repo/db           Drizzle + libSQL/Turso
@@ -392,7 +396,8 @@ Micro-Frontend-E-Commerce-Platform/
 
 ```bash
 pnpm install              # Install dependencies
-pnpm dev                  # Start shell on port 3000
+pnpm dev                  # Start all MFEs (3001-3005) + shell (3000) in parallel
+pnpm dev:shell            # Start shell only (requires MFEs already running)
 pnpm build                # Build all packages + MFEs + shell
 pnpm typecheck            # TypeScript check all packages
 pnpm test                 # Run tests

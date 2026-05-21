@@ -1,10 +1,17 @@
 import { selectTotalItems, selectTotalPrice, useCartStore } from "@repo/cart-store";
-import { Alert, AlertDescription, Button, Image, Input, Label } from "@repo/ui";
-import { useForm } from "@tanstack/react-form";
+import { isValidEmail } from "@repo/types";
+import { Alert, AlertDescription, Button, Image, Input, Label, Separator, Spinner } from "@repo/ui";
+import { useForm, useStore } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { treatyClient } from "../lib/api";
+
+const formatUSD = (amount: number) =>
+  new Intl.NumberFormat((navigator as unknown as { languages?: readonly string[] })?.languages ?? "en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
 
 export function CheckoutPage() {
 	const items = useCartStore((s) => s.items);
@@ -62,24 +69,34 @@ export function CheckoutPage() {
 		},
 	});
 
+	const isDirty = useStore(form.store, (state) => state.isDirty);
+	useEffect(() => {
+		if (!isDirty) return;
+		const onBeforeUnload = (e: BeforeUnloadEvent) => {
+			e.preventDefault();
+			e.returnValue = "";
+		};
+		window.addEventListener("beforeunload", onBeforeUnload);
+		return () => window.removeEventListener("beforeunload", onBeforeUnload);
+	}, [isDirty]);
+
 	if (items.length === 0 && !submitted) {
 		return (
 			<div className="animate-in fade-in duration-500">
-				<div className="mb-10 border-b border-[#d4cec4] pb-6">
+				<div className="mb-10 border-b border-border pb-6">
 					<p className="kicker mb-1">Checkout</p>
 					<h1
-						className="text-5xl md:text-7xl leading-none tracking-[-0.02em] text-[#1a1a1a]"
-						style={{ fontFamily: "'Anton', sans-serif" }}
+						className="text-5xl md:text-7xl leading-none tracking-[-0.02em] text-foreground font-display"
 					>
 						CHECKOUT
 					</h1>
 				</div>
-				<div className="border border-[#d4cec4] p-16 text-center">
-					<p className="text-[#6b6760] uppercase tracking-[0.12em] mb-6">
+				<div className="border border-border p-16 text-center">
+					<p className="text-muted-foreground uppercase tracking-[0.12em] mb-6">
 						Your cart is empty
 					</p>
 					<Link to="/">
-						<Button className="h-10 px-8 bg-[#ff4d00] text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-[#e65c00] transition-colors rounded-none border-none cursor-pointer">
+						<Button className="h-10 px-8 font-bold uppercase tracking-[0.12em] text-sm rounded-none">
 							Start Shopping
 						</Button>
 					</Link>
@@ -91,25 +108,24 @@ export function CheckoutPage() {
 	if (submitted) {
 		return (
 			<div className="animate-in fade-in duration-500">
-				<div className="border border-[#d4cec4] p-12 lg:p-16 text-center max-w-2xl mx-auto">
-					<div className="mx-auto flex items-center justify-center h-16 w-16 bg-[#ff4d00] mb-8">
-						<Check className="h-8 w-8 text-white" />
+				<div className="border border-border p-12 lg:p-16 text-center max-w-2xl mx-auto">
+					<div className="mx-auto flex items-center justify-center h-16 w-16 bg-primary mb-8">
+						<Check aria-hidden="true" className="h-8 w-8 text-white" />
 					</div>
 					<h1
-						className="text-4xl md:text-5xl text-[#1a1a1a] mb-4"
-						style={{ fontFamily: "'Anton', sans-serif" }}
+						className="text-4xl md:text-5xl text-foreground mb-4 font-display"
 					>
 						CONFIRMED
 					</h1>
-					<p className="text-sm text-[#6b6760] mb-4 tracking-wide">
+					<p className="text-sm text-muted-foreground mb-4 tracking-wide">
 						Thank you for your purchase. Your order number:
 					</p>
-					<p className="text-xs font-mono text-[#ff4d00] border border-[#d4cec4] inline-block px-6 py-4 mb-8 break-all tracking-wide bg-white">
+					<p className="text-xs font-mono text-primary border border-border inline-block px-6 py-4 mb-8 break-all tracking-wide bg-white">
 						{orderNumber}
 					</p>
 					<div>
 						<Link to="/">
-							<Button className="h-12 px-10 bg-[#ff4d00] text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-[#e65c00] transition-colors rounded-none border-none cursor-pointer">
+							<Button className="h-12 px-10 font-bold uppercase tracking-[0.12em] text-sm rounded-none">
 								Continue Shopping
 							</Button>
 						</Link>
@@ -121,11 +137,10 @@ export function CheckoutPage() {
 
 	return (
 		<div className="animate-in fade-in duration-500">
-			<div className="mb-10 border-b border-[#d4cec4] pb-6">
+			<div className="mb-10 border-b border-border pb-6">
 				<p className="kicker mb-1">Checkout</p>
 				<h1
-					className="text-5xl md:text-7xl leading-none tracking-[-0.02em] text-[#1a1a1a]"
-					style={{ fontFamily: "'Anton', sans-serif" }}
+					className="text-5xl md:text-7xl leading-none tracking-[-0.02em] text-foreground font-display"
 				>
 					CHECKOUT
 				</h1>
@@ -134,17 +149,16 @@ export function CheckoutPage() {
 			{error && (
 				<Alert
 					variant="destructive"
-					className="mb-6 rounded-none border border-[#ff4d00] bg-white text-[#ff4d00]"
+					className="mb-6 rounded-none border border-primary bg-white text-primary"
 				>
 					<AlertDescription>{error}</AlertDescription>
 				</Alert>
 			)}
 
-			<div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-[#d4cec4]">
-				<div className="lg:col-span-7 border-b lg:border-b-0 lg:border-r border-[#d4cec4] p-8 lg:p-12">
+			<div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-border">
+				<div className="lg:col-span-7 border-b lg:border-b-0 lg:border-r border-border p-8 lg:p-12">
 					<h2
-						className="text-lg text-[#1a1a1a] mb-8"
-						style={{ fontFamily: "'Anton', sans-serif" }}
+						className="text-lg text-foreground mb-8 font-display"
 					>
 						SHIPPING
 					</h2>
@@ -154,7 +168,7 @@ export function CheckoutPage() {
 							e.stopPropagation();
 							void form.handleSubmit();
 						}}
-						className="space-y-5"
+						className="flex flex-col gap-5"
 					>
 						<form.Field
 							name="name"
@@ -167,7 +181,7 @@ export function CheckoutPage() {
 								<div>
 									<Label
 										htmlFor={field.name}
-										className="text-xs uppercase tracking-[0.1em] text-[#6b6760] mb-1 block"
+										className="text-xs uppercase tracking-[0.1em] text-muted-foreground mb-1 block"
 									>
 										Full Name
 									</Label>
@@ -177,10 +191,12 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
-										className="w-full h-10 bg-white border border-[#d4cec4] px-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#ff4d00] transition-colors rounded-none"
+										aria-invalid={field.state.meta.errors.length > 0}
+										aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
+										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
-										<p className="text-xs text-[#ff4d00] mt-1">
+										<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 											{field.state.meta.errors[0]}
 										</p>
 									)}
@@ -190,20 +206,20 @@ export function CheckoutPage() {
 
 						<form.Field
 							name="email"
-							validators={{
-								onChange: ({ value }) =>
-									!value
-										? "Email is required"
-										: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-											? "Invalid email address"
-											: undefined,
-							}}
+                  validators={{
+                    onChange: ({ value }) =>
+                      !value
+                        ? "Email is required"
+                        : !isValidEmail(value)
+                          ? "Invalid email address"
+                          : undefined,
+                  }}
 						>
 							{(field) => (
 								<div>
 									<Label
 										htmlFor={field.name}
-										className="text-xs uppercase tracking-[0.1em] text-[#6b6760] mb-1 block"
+										className="text-xs uppercase tracking-[0.1em] text-muted-foreground mb-1 block"
 									>
 										Email
 									</Label>
@@ -214,10 +230,12 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
-										className="w-full h-10 bg-white border border-[#d4cec4] px-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#ff4d00] transition-colors rounded-none"
+										aria-invalid={field.state.meta.errors.length > 0}
+										aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
+										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
-										<p className="text-xs text-[#ff4d00] mt-1">
+										<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 											{field.state.meta.errors[0]}
 										</p>
 									)}
@@ -236,7 +254,7 @@ export function CheckoutPage() {
 								<div>
 									<Label
 										htmlFor={field.name}
-										className="text-xs uppercase tracking-[0.1em] text-[#6b6760] mb-1 block"
+										className="text-xs uppercase tracking-[0.1em] text-muted-foreground mb-1 block"
 									>
 										Address
 									</Label>
@@ -246,10 +264,12 @@ export function CheckoutPage() {
 										value={field.state.value}
 										onBlur={field.handleBlur}
 										onChange={(e) => field.handleChange(e.target.value)}
-										className="w-full h-10 bg-white border border-[#d4cec4] px-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#ff4d00] transition-colors rounded-none"
+										aria-invalid={field.state.meta.errors.length > 0}
+										aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
+										className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 									/>
 									{field.state.meta.errors.length > 0 && (
-										<p className="text-xs text-[#ff4d00] mt-1">
+										<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 											{field.state.meta.errors[0]}
 										</p>
 									)}
@@ -257,7 +277,7 @@ export function CheckoutPage() {
 							)}
 						</form.Field>
 
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<form.Field
 								name="city"
 								validators={{
@@ -269,7 +289,7 @@ export function CheckoutPage() {
 									<div>
 										<Label
 											htmlFor={field.name}
-											className="text-xs uppercase tracking-[0.1em] text-[#6b6760] mb-1 block"
+											className="text-xs uppercase tracking-[0.1em] text-muted-foreground mb-1 block"
 										>
 											City
 										</Label>
@@ -279,10 +299,12 @@ export function CheckoutPage() {
 											value={field.state.value}
 											onBlur={field.handleBlur}
 											onChange={(e) => field.handleChange(e.target.value)}
-											className="w-full h-10 bg-white border border-[#d4cec4] px-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#ff4d00] transition-colors rounded-none"
+											aria-invalid={field.state.meta.errors.length > 0}
+											aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
+											className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 										/>
 										{field.state.meta.errors.length > 0 && (
-											<p className="text-xs text-[#ff4d00] mt-1">
+											<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 												{field.state.meta.errors[0]}
 											</p>
 										)}
@@ -300,7 +322,7 @@ export function CheckoutPage() {
 									<div>
 										<Label
 											htmlFor={field.name}
-											className="text-xs uppercase tracking-[0.1em] text-[#6b6760] mb-1 block"
+											className="text-xs uppercase tracking-[0.1em] text-muted-foreground mb-1 block"
 										>
 											ZIP Code
 										</Label>
@@ -310,10 +332,12 @@ export function CheckoutPage() {
 											value={field.state.value}
 											onBlur={field.handleBlur}
 											onChange={(e) => field.handleChange(e.target.value)}
-											className="w-full h-10 bg-white border border-[#d4cec4] px-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#ff4d00] transition-colors rounded-none"
+											aria-invalid={field.state.meta.errors.length > 0}
+											aria-describedby={field.state.meta.errors.length > 0 ? `${field.name}-error` : undefined}
+											className="w-full h-10 bg-white border border-border px-3 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary transition-colors rounded-none"
 										/>
 										{field.state.meta.errors.length > 0 && (
-											<p className="text-xs text-[#ff4d00] mt-1">
+											<p id={`${field.name}-error`} className="text-xs text-primary mt-1">
 												{field.state.meta.errors[0]}
 											</p>
 										)}
@@ -331,10 +355,18 @@ export function CheckoutPage() {
 							{({ canSubmit, isSubmitting }) => (
 								<Button
 									type="submit"
-									className="w-full h-12 bg-[#ff4d00] text-white font-bold uppercase tracking-[0.12em] text-sm hover:bg-[#e65c00] transition-colors rounded-none border-none cursor-pointer mt-6"
+									className="w-full h-12 font-bold uppercase tracking-[0.12em] text-sm rounded-none mt-6"
 									disabled={!canSubmit || isSubmitting || processing}
+									aria-busy={processing}
 								>
-									{processing ? "Processing..." : "Place Order"}
+									{processing ? (
+										<span className="flex items-center justify-center gap-2">
+											<Spinner size="sm" className="text-white" />
+											Processing…
+										</span>
+									) : (
+										"Place Order"
+									)}
 								</Button>
 							)}
 						</form.Subscribe>
@@ -343,15 +375,14 @@ export function CheckoutPage() {
 
 				<div className="lg:col-span-5 p-8 lg:p-12">
 					<h2
-						className="text-lg text-[#1a1a1a] mb-6"
-						style={{ fontFamily: "'Anton', sans-serif" }}
+						className="text-lg text-foreground mb-6 font-display"
 					>
 						ORDER
 					</h2>
-					<div className="divide-y divide-[#d4cec4]">
+					<div className="divide-y divide-border">
 						{items.map((item) => (
 							<div key={item.id} className="flex gap-4 py-4 first:pt-0">
-								<div className="w-14 h-14 shrink-0 bg-[#f0ece4] border border-[#d4cec4] flex items-center justify-center">
+								<div className="w-14 h-14 shrink-0 bg-secondary border border-border flex items-center justify-center">
 									<Image
 										src={item.image}
 										alt={item.title}
@@ -360,34 +391,34 @@ export function CheckoutPage() {
 									/>
 								</div>
 								<div className="flex-1 min-w-0">
-									<p className="text-sm text-[#1a1a1a] truncate">
+									<p className="text-sm text-foreground truncate">
 										{item.title}
 									</p>
-									<p className="text-xs text-[#6b6760] tabular-nums">
-										{item.quantity} x ${item.price.toFixed(2)}
-									</p>
-								</div>
-								<p className="text-sm text-[#1a1a1a] font-medium shrink-0 tabular-nums">
-									${(item.price * item.quantity).toFixed(2)}
-								</p>
-							</div>
-						))}
-					</div>
-					<div className="thick-divider my-6" />
-					<div className="space-y-2 text-sm mb-4">
-						<div className="flex justify-between text-[#6b6760]">
-							<span>Items ({totalItems})</span>
-							<span className="tabular-nums">${totalPrice.toFixed(2)}</span>
-						</div>
-						<div className="flex justify-between text-[#6b6760]">
-							<span>Shipping</span>
-							<span className="text-[#00b8a0]">Free</span>
-						</div>
-					</div>
-					<div className="thin-divider my-4" />
-					<div className="flex justify-between text-base text-[#1a1a1a] font-medium">
-						<span>Total</span>
-						<span className="tabular-nums">${totalPrice.toFixed(2)}</span>
+									<p className="text-xs text-muted-foreground tabular-nums">
+                    {item.quantity} x {formatUSD(item.price)}
+                    </p>
+                  </div>
+                  <p className="text-sm text-foreground font-medium shrink-0 tabular-nums">
+                    {formatUSD(item.price * item.quantity)}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <Separator className="my-6 h-[3px] bg-foreground" />
+            <div className="flex flex-col gap-2 text-sm mb-4">
+              <div className="flex justify-between text-muted-foreground">
+                <span>Items ({totalItems})</span>
+                <span className="tabular-nums">{formatUSD(totalPrice)}</span>
+              </div>
+              <div className="flex justify-between text-muted-foreground">
+                <span>Shipping</span>
+                <span className="text-cyan">Free</span>
+              </div>
+            </div>
+            <Separator className="my-4" />
+            <div className="flex justify-between text-base text-foreground font-medium">
+              <span>Total</span>
+              <span className="tabular-nums">{formatUSD(totalPrice)}</span>
 					</div>
 				</div>
 			</div>

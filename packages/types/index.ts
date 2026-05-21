@@ -103,6 +103,11 @@ export interface JsoningUser {
 	phone: string;
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export function isValidEmail(value: string): boolean {
+  return EMAIL_RE.test(value);
+}
+
 export interface JsoningCart {
 	id: string;
 	userId: null | number;
@@ -112,4 +117,20 @@ export interface JsoningCart {
 	}>;
 	date: string;
 	status: string;
+}
+
+export async function retryGet<T>(
+  fn: () => Promise<T>,
+  maxRetries = 2,
+): Promise<T> {
+  let lastError: unknown;
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (i < maxRetries) await new Promise((r) => setTimeout(r, 1000 * 2 ** i));
+    }
+  }
+  throw lastError;
 }

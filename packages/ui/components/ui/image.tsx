@@ -27,11 +27,12 @@ function Image({
 			fallback ?? (
 				<div
 					className={cn(
-						"flex items-center justify-center bg-[#eae6de] text-[#6b6760]",
+						"flex flex-col items-center justify-center gap-1 bg-secondary text-muted-foreground",
 						className,
 					)}
 				>
-					<ImageIcon className="h-8 w-8" />
+					<ImageIcon className="h-6 w-6" />
+					<span className="text-[10px] leading-tight tracking-wide">Image not found</span>
 				</div>
 			)
 		);
