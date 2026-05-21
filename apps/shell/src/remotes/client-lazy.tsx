@@ -19,11 +19,38 @@ const isServer = typeof window === "undefined";
 let mfInstance: ReturnType<typeof createInstance> | null = null;
 let mfInitPromise: Promise<void> | null = null;
 
+function preloadMfeModuleCache() {
+  const cache = ((globalThis as any).__mf_module_cache__ ||= { share: {}, remote: {} });
+  const share = cache.share;
+  const entries: [string, any][] = [
+    ["react", React],
+    ["react-dom", ReactDOM],
+    ["react/jsx-runtime", ReactJsxRuntime],
+    ["react/jsx-dev-runtime", ReactJsxDevRuntime],
+    ["react-dom/client", ReactDomClient],
+    ["@tanstack/react-form", ReactForm],
+    ["@tanstack/react-router", ReactRouter],
+    ["@tanstack/react-query", ReactQuery],
+    ["@repo/cart-store", CartStore],
+    ["@repo/ui", RepoUi],
+    ["lucide-react", LucideReact],
+    ["@icons-pack/react-simple-icons", SimpleIcons],
+  ];
+  for (const [key, mod] of entries) {
+    if (share[key] === undefined) {
+      const exportModule = { ...mod, __esModule: true };
+      share[key] = exportModule;
+    }
+  }
+}
+
 function ensureMfRuntime(): Promise<void> {
   if (!mfInitPromise) {
     mfInitPromise = (async () => {
+      preloadMfeModuleCache();
       mfInstance = createInstance({
         name: "shell",
+        version: "1.0.0",
         remotes: [
           {
             name: "auth",
@@ -89,13 +116,13 @@ function ensureMfRuntime(): Promise<void> {
             shareConfig: { singleton: true, requiredVersion: "*" },
           },
           "@tanstack/react-router": {
-            version: "1.0.0",
+            version: "1.170.5",
             scope: "default",
             lib: () => ReactRouter,
             shareConfig: { singleton: true, requiredVersion: "*" },
           },
           "@tanstack/react-query": {
-            version: "5.0.0",
+            version: "5.100.11",
             scope: "default",
             lib: () => ReactQuery,
             shareConfig: { singleton: true, requiredVersion: "*" },

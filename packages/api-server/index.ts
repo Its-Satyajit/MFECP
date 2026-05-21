@@ -14,7 +14,7 @@ export const app = new Elysia()
 		const session = await auth.api.getSession({
 			headers: request.headers,
 		});
-		if (!session) return null;
+		if (!session) return new Response(null, { status: 204 });
 		return session;
 	})
 	.use(productsRoutes)

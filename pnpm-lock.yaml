@@ -362,6 +362,9 @@ importers:
       '@module-federation/enhanced':
         specifier: ^2.4.0
         version: 2.4.0(@rspack/core@2.0.3(@module-federation/runtime-tools@2.4.0(node-fetch@3.3.2)))(node-fetch@3.3.2)(typescript@6.0.3)
+      '@module-federation/runtime-tools':
+        specifier: ^2.4.0
+        version: 2.4.0(node-fetch@3.3.2)
       '@repo/api-server':
         specifier: workspace:*
         version: link:../../packages/api-server

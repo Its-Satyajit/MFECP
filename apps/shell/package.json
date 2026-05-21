@@ -16,6 +16,8 @@
     "@fontsource/anton": "^5.2.7",
     "@icons-pack/react-simple-icons": "^13.13.0",
     "@module-federation/enhanced": "^2.4.0",
+    "@module-federation/runtime-tools": "^2.4.0",
+
     "@repo/api-server": "workspace:*",
     "@repo/auth-mf": "workspace:*",
     "@repo/cart-store": "workspace:*",
